@@ -1,0 +1,12 @@
+{% extends 'layout.html' %}
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center">Welcome to TrekCentral</h1>
+    <p class="text-center">Your one-stop destination for all things trekking!</p>
+    <div class="text-center mt-4">
+        <a href="{{ url_for('login') }}" class="btn btn-primary">Login</a>
+    </div>
+</div>
+{% endblock %}
