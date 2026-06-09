@@ -1,0 +1,68 @@
+{% extends "layout.html" %}
+
+{% block title %}Add Trek{% endblock %}
+
+{% block content %}
+<h1 class="text-center mt-4"> Add Trek  <i class="fa-solid fa-cable-car"></i> </h1>
+<br>
+<form class="row g-3" method="POST">
+  <div class="col-md-6">
+    <label for="name" class="form-label"><strong>Name</strong></label>
+    <input type="text" class="form-control" id="name" name="name" required>
+  </div>
+  <div class="col-md-6">
+    <label for="location" class="form-label"><strong>Location</strong></label>
+    <input type="text" class="form-control" id="location" name="location" required>
+  </div>
+  <div class="col-md-6">
+    <label for="difficulty" class="form-label"><strong>Difficulty</strong></label>
+    <select class="form-select" id="difficulty" name="difficulty" required>
+      <option value="">-- Select Difficulty --</option>
+      <option value="Easy">Easy</option>
+      <option value="Medium">Medium</option>
+      <option value="Hard">Hard</option>
+    </select>
+  </div>
+  <div class="col-md-6">
+    <label for="price" class="form-label"><strong>Price</strong></label>
+    <input type="number" class="form-control" id="price" name="price" required>
+  </div>
+  <div class="col-md-6">
+    <label for="description" class="form-label"><strong>Description</strong></label>
+    <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+  </div>
+  <div class="col-md-6">
+    <label for="available_slots" class="form-label"><strong>Available Slots</strong></label>
+    <input type="number" class="form-control" id="available_slots" name="available_slots" required>
+  </div>
+  <div class="col-md-6">
+    <label for="assigned_staff_id" class="form-label"><strong>Assigned Staff</strong></label>
+    <select class="form-select" id="assigned_staff_id" name="assigned_staff_id">
+      <option value="">-- Select Staff --</option>
+      {% for staff in staff %}
+        <option value="{{ staff.id }}">{{ staff.fullname }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-md-6">
+    <label for="start_date" class="form-label"><strong>Start Date</strong></label>
+    <input type="date" class="form-control" id="start_date" name="start_date" required>
+  </div>
+  <div class="col-md-6">
+    <label for="end_date" class="form-label"><strong>End Date</strong></label>
+    <input type="date" class="form-control" id="end_date" name="end_date" required>
+  </div>
+  <div class="col-md-6">
+    <label for="status" class="form-label"><strong>Status</strong></label>
+    <select class="form-select" id="status" name="status">
+      <option value="">-- Select Status --</option>
+      <option value="Approved">Approved</option>
+      <option value="Open">Open</option>
+    </select>
+  </div>
+  <br>
+  <br>
+  <div class="text-center mt-4">
+    <button type="submit" class="btn btn-primary">Add Trek</button>
+  </div>
+{% endblock %}

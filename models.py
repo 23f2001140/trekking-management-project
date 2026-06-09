@@ -45,6 +45,6 @@ with app.app_context():
     db.create_all()
     admin=User.query.filter_by(username='admin').first()
     if not admin:
-        admin_user = User(username='admin', phone='0000000000', passhash=generate_password_hash('admin123'), fullname='Admin User', role='admin')
+        admin_user = User(username='admin', phone='0000000000', passhash=generate_password_hash('admin123'), fullname='Admin', role='admin')
         db.session.add(admin_user)
         db.session.commit()

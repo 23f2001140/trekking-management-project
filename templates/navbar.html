@@ -14,22 +14,55 @@
               <a class="nav-link" href="{{ url_for('register') }}">Register</a>
             </li>
         {% else %}
-        
-        <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="#">Home</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Features</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Pricing</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link disabled" aria-disabled="true">Disabled</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
-        </li>
+            {% if current_user.role == 'admin' %}
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="{{ url_for('admin_profile') }}">Profile</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">Users</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">Staffs</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">Treks</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">Bookings</a>
+              </li>
+              <li class="nav-item">
+                  <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
+              </li>
+            
+            {% elif current_user.role == 'staff' %}
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="#">Profile</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">Assigned Treks</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">Bookings</a>
+              </li>
+              <li class="nav-item">
+                  <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
+              </li>
+            {% elif current_user.role == 'user' %}
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="#">Profile</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">Current Booking</a>
+              </li> 
+              <li class="nav-item"> 
+                <a class="nav-link" href="#">Booking History</a>
+              </li>
+              <li class="nav-item">
+                  <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
+              </li>
+            {% endif %}
+
+
         {% endif %}
       </ul>
     </div>

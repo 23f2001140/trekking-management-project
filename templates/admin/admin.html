@@ -1,0 +1,75 @@
+{% extends 'layout.html' %}
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<h1><i class="fa-solid fa-gauge-high"></i> Dashboard
+<a href="{{ url_for('add_trek')}}" class="btn btn-success mt-2 float-end"><i class="fa-solid fa-plus"></i> New Trek </a> </h1>
+<p class="text-muted">Welcome, {{ current_user.fullname }}!</p>
+<div class="row mb-4 mt-4 d-flex justify-content-center align-items-center">
+  <div class="col-sm-3">
+    <div class="card text-bg-dark mb-3">
+      <a href="{{ url_for('admin_profile')}}" class="text-decoration-none text-white">
+        <div class="card-body">
+          <h5 class="card-title fa-solid fa-map"></h5>
+          <h2 class="card-text">{{treks}}</h2>
+          <h5 class="card-title"><strong>Total Treks</strong></h5>
+        </div>
+      </a>
+    </div>
+  </div>
+  <div class="col-sm-3">
+    <div class="card text-bg-success mb-3">
+      <a href="{{ url_for('admin_profile')}}" class="text-decoration-none text-white">
+        <div class="card-body">
+          <h5 class="card-title fa-solid fa-users"></h5>
+          <h2 class="card-text"><strong>{{ users }}</strong></h2>
+          <h5 class="card-title"><strong>Registered Users</strong></h5>
+        </div>
+      </a>
+    </div>
+  </div>
+  <div class="col-sm-3">
+    <div class="card text-bg-info mb-3">
+      <a href="{{ url_for('admin_profile')}}" class="text-decoration-none text-dark">
+        <div class="card-body">
+          <h5 class="card-title fa-solid fa-users-gear"></h5>
+          <h2 class="card-text"><strong>{{ staff }}</strong></h2>
+          <h5 class="card-title"><strong>Trek Staff</strong></h5>
+        </div>
+      </a>
+    </div>
+  </div>
+  <div class="col-sm-3">
+    <div class="card text-bg-warning mb-3">
+      <a href="{{ url_for('admin_profile')}}" class="text-decoration-none text-dark">
+        <div class="card-body">
+          <h5 class="card-title fa-solid fa-list-check"> </h5>
+          <h2 class="card-text"><strong>{{ bookings }}</strong></h2>
+          <h5 class="card-title"><strong>Total Bookings</strong></h5>
+        </div>
+      </a>
+    </div>
+  </div>
+</div>
+<br>
+{% if pending_staff %}
+    <h3 style="margin-left: 35px;">Staff waiting for approval</h3>
+    <ul>
+        {% for staff in pending_staff %}
+            <div class="card mb-3">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="card-title">{{ staff.fullname }}</h5>
+                        <p class="card-text"><strong>Username:</strong> {{ staff.username }}</p>
+                        <p class="card-text"><strong>Phone:</strong> {{ staff.phone }}</p>
+                    </div>
+                    <div>
+                        <a href="{{ url_for('approve_staff', staff_id=staff.id) }}" class="btn btn-success">Approve</a>
+                        <a href="{{ url_for('reject_staff', staff_id=staff.id) }}" class="btn btn-danger">Reject</a>
+                    </div>  
+                </div>
+            </div>
+        {% endfor %}
+    </ul>
+{% endif %}
+{% endblock %}
