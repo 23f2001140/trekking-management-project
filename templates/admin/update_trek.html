@@ -1,0 +1,83 @@
+{% extends "layout.html" %}
+{% block title %}Treak Update{% endblock %}
+
+{% block content %}
+<h1 class="text-center mt-4">Update Trek  <i class="fa-solid fa-route"></i> </h1>
+<br>
+<div class="row g-3">
+
+  <form class="row g-3" method="POST">
+  <div class="col-md-3">
+    <div class="card text-bg-dark mb-3">
+      <img src="{{ get_trek_image(trek.id) }}" alt="Trek Image" class="card-img-top">
+    </div>
+  </div>
+    <div class="col-md-9">
+    <label for="description" class="form-label"><strong>Description</strong></label>
+    <textarea class="form-control" id="description" name="description" rows="3">{{ trek.description }}</textarea>
+  </div>
+  <div class="col-md-6">
+    <label for="name" class="form-label"><strong>Name</strong></label>
+    <input type="text" class="form-control" id="name" name="name" value="{{ trek.name }}" required>
+  </div>
+  <div class="col-md-6">
+    <label for="location" class="form-label"><strong>Location</strong></label>
+    <input type="text" class="form-control" id="location" name="location" value="{{ trek.location }}" required>
+  </div>
+  <div class="col-md-6">
+    <label for="difficulty" class="form-label"><strong>Change Difficulty</strong></label>
+    <select class="form-select" id="difficulty" name="difficulty" required>
+      <option value="">-- Difficulty --</option>
+      <option value="Easy" {% if trek.difficulty == 'Easy' %}selected{% endif %}>Easy</option>
+      <option value="Moderate" {% if trek.difficulty == 'Moderate' %}selected{% endif %}>Moderate</option>
+      <option value="Hard" {% if trek.difficulty == 'Hard' %}selected{% endif %}>Hard</option>
+    </select>
+  </div>
+  <div class="col-md-6">
+    <label for="price" class="form-label"><strong>Price</strong></label>
+    <input type="number" class="form-control" id="price" name="price" value="{{ trek.price }}" required>
+  </div>
+  <div class="col-md-6">
+    <label for="available_slots" class="form-label"><strong>Available Slots</strong></label>
+    <input type="number" class="form-control" id="available_slots" name="available_slots" value="{{ trek.available_slots }}" required>
+  </div>
+  <div class="col-md-6">
+    <label for="assigned_staff_id" class="form-label"><strong>Assigned Staff</strong></label>
+    <select class="form-select" id="assigned_staff_id" name="assigned_staff_id" >
+      <option value="">-- Select Staff --</option>
+      {% for staff in staff %}
+        <option value="{{ staff.id }}" {% if staff.id == trek.assigned_staff.id %}selected{% endif %}>{{ staff.fullname }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-md-3">
+    <label for="start_date" class="form-label"><strong>Start Date</strong></label>
+    <input type="date" class="form-control" id="start_date" name="start_date" value="{{ trek.start_date }}" required>
+  </div>
+  <div class="col-md-3">
+    <label for="end_date" class="form-label"><strong>End Date</strong></label>
+    <input type="date" class="form-control" id="end_date" name="end_date" value="{{ trek.end_date }}" required>
+  </div>
+  <div class="col-md-6">
+    <label for="status" class="form-label"><strong>Change Status</strong></label>
+    <select class="form-select" id="status" name="status">
+      <option value="">-- Status --</option>
+      <option value="Pending" {% if trek.status == 'Pending' %}selected{% endif %}>Pending</option>
+      <option value="Approved"{% if trek.status == 'Approved' %}selected{% endif %}>Approved</option>
+      <option value="Open" {% if trek.status == 'Open' %}selected{% endif %}>Open</option>
+      <option value="Closed" {% if trek.status == 'Closed' %}selected{% endif %}>Closed</option>
+      <option value="Completed" {% if trek.status == 'Completed' %}selected{% endif %}>Completed</option>
+    </select>
+  </div>
+  <br>
+  <br>
+  <div class="text-center mt-4">
+    <button type="submit" class="btn btn-primary">Update Trek</button>
+  </div>
+  </form>
+  <div class="text-center mt-4">
+  <a class="btn btn-danger mb-3 w-50" href="{{ url_for('delete_trek', trek_id=trek.id)}}">Delete This Trek</a>
+  </div>
+</div>
+
+{% endblock %}

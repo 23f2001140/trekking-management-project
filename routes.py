@@ -5,6 +5,7 @@ from models import db, User, Trek, Booking
 from flask_login import login_user, logout_user, login_required, current_user
 from functools import wraps
 from datetime import datetime
+import os
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -214,6 +215,22 @@ def admin_profile():
     
     return render_template('admin/admin_profile.html')
 
+#For image upload
+TREK_IMAGES_FOLDER = os.path.join( 'static','trek_images')
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+def get_trek_image(trek_id):
+    for ext in ['jpg', 'jpeg', 'png']:
+        path = os.path.join(TREK_IMAGES_FOLDER, f"{trek_id}.{ext}")
+
+        if os.path.exists(path):
+            return url_for('static', filename=f"trek_images/{trek_id}.{ext}")
+
+    return None
+
 @app.route('/admin/add_trek', methods=['GET', 'POST'])
 @login_required
 @admin_required
@@ -245,14 +262,111 @@ def add_trek():
         if not name or not location or not difficulty or not price or not duration or not available_slots or not start_date or not end_date or not status:
             flash('Fill the required fields to Continue!', 'danger')
             return redirect(url_for('add_trek'))
-        db.session.add(Trek(name=name, location=location, difficulty=difficulty, price=price, description=description, duration=duration, available_slots=available_slots, assigned_staff_id=assigned_staff_id, start_date=start_date, end_date=end_date, status=status))
+        
+        trek=Trek(name=name, location=location, difficulty=difficulty, price=price, description=description, duration=duration, available_slots=available_slots, assigned_staff_id=assigned_staff_id, start_date=start_date, end_date=end_date, status=status)
+        db.session.add(trek)
         db.session.commit()
+        
+        image= request.files.get('image')
+        image_ext=None
+        if image and allowed_file(image.filename):
+            image_ext=image.filename.rsplit('.', 1)[1].lower()
+            os.makedirs(TREK_IMAGES_FOLDER, exist_ok=True)
+            image.save(os.path.join(TREK_IMAGES_FOLDER, f"{trek.id}.{image_ext}"))
+        
         flash('Trek added successfully!', 'success')
         return redirect(url_for('admin_dashboard'))
     staff = User.query.filter_by(role='staff' , is_blacklisted=False , staff_status='approved').all()
     return render_template('admin/add_trek.html',staff=staff)
+
+@app.route('/admin/treks_details' , methods=['GET', 'POST'])
+@login_required
+@admin_required
+def trek_details():
+    treks=Trek.query.all()
+    return render_template('admin/treks.html' , treks=treks, get_trek_image=get_trek_image)
+        
+@app.route('/admin/trek_update/<int:trek_id>' , methods=['GET', 'POST'])
+@login_required
+@admin_required
+def trek_update(trek_id):
+    if request.method == 'POST':
+        trek=Trek.query.get(trek_id)
+        if not trek:
+            flash('Trek not found!', 'danger')
+            return redirect(url_for('trek_details'))
+        name = request.form.get('name')
+        location = request.form.get('location')
+        difficulty = request.form.get('difficulty')
+        price = request.form.get('price')
+        description = request.form.get('description')
+        available_slots = request.form.get('available_slots')
+        assigned_staff_id = request.form.get('assigned_staff_id')
+        start_date = datetime.strptime(request.form['start_date'], '%Y-%m-%d').date()
+        end_date = datetime.strptime(request.form['end_date'], '%Y-%m-%d').date()
+        status = request.form.get('status')
+        
+        if(end_date <= start_date):
+            flash('End date should be greater than start date!', 'danger')
+            return redirect(url_for('trek_update', trek_id=trek_id))
+        
+        duration = (end_date - start_date).days
+        
+        if not assigned_staff_id:
+            if status in ['Open', 'Approved', 'Closed', 'Completed']:
+                flash('You cannot add a trek with status as Open, Approved, Closed or Completed without assigning staff!', 'warning')
+                return redirect(url_for('trek_update', trek_id=trek_id))
+            else:
+                status = 'Pending'
+        else:
+            if status == 'Pending':
+                flash('You cannot choose Trek status as Pending When staff is assigned!', 'warning')
+                return redirect(url_for('trek_update', trek_id=trek_id))
+        if not name or not location or not difficulty or not price or not duration or not available_slots or not start_date or not end_date or not status:
+            flash('Fill the required fields to Continue!', 'danger')
+            return redirect(url_for('trek_update', trek_id=trek_id))
+        trek.name = name
+        trek.location = location
+        trek.difficulty = difficulty
+        trek.price = price
+        trek.description = description
+        trek.duration = duration
+        trek.available_slots = available_slots
+        trek.assigned_staff_id = assigned_staff_id
+        trek.start_date = start_date
+        trek.end_date = end_date
+        trek.status = status
+        db.session.commit()
+        flash('Trek updated successfully!', 'success')
+        return redirect(url_for('trek_details'))
         
         
+    trek=Trek.query.get(trek_id)
+    staff = User.query.filter_by(role='staff' , is_blacklisted=False , staff_status='approved').all()
+    if not trek:
+        flash('Trek not found!', 'danger')
+        return redirect(url_for('trek_details'))
+    return render_template('admin/update_trek.html' , trek=trek , get_trek_image=get_trek_image, staff=staff)
+
+@app.route('/admin/delete_trek/<int:trek_id>')
+@login_required
+@admin_required
+def delete_trek(trek_id):
+    trek=Trek.query.get(trek_id)
+    if not trek:
+        flash('Invalid trek id!', 'danger')
+        return redirect(url_for('trek_details'))
+    
+    for ext in ALLOWED_EXTENSIONS:
+        path = os.path.join(TREK_IMAGES_FOLDER, f"{trek.id}.{ext}")
+        if os.path.exists(path):
+            os.remove(path)
+            break
+    db.session.delete(trek)
+    db.session.commit()
+    flash('Trek deleted successfully!', 'success')
+    return redirect(url_for('trek_details'))
+
 
 @app.route('/staff')
 @login_required

@@ -5,7 +5,7 @@
 {% block content %}
 <h1 class="text-center mt-4"> Add Trek  <i class="fa-solid fa-cable-car"></i> </h1>
 <br>
-<form class="row g-3" method="POST">
+<form class="row g-3" method="POST" enctype="multipart/form-data">
   <div class="col-md-6">
     <label for="name" class="form-label"><strong>Name</strong></label>
     <input type="text" class="form-control" id="name" name="name" required>
@@ -19,7 +19,7 @@
     <select class="form-select" id="difficulty" name="difficulty" required>
       <option value="">-- Select Difficulty --</option>
       <option value="Easy">Easy</option>
-      <option value="Medium">Medium</option>
+      <option value="Moderate">Moderate</option>
       <option value="Hard">Hard</option>
     </select>
   </div>
@@ -36,7 +36,7 @@
     <input type="number" class="form-control" id="available_slots" name="available_slots" required>
   </div>
   <div class="col-md-6">
-    <label for="assigned_staff_id" class="form-label"><strong>Assigned Staff</strong></label>
+    <label for="assigned_staff_id" class="form-label"><strong>Assign Staff To Trek</strong></label>
     <select class="form-select" id="assigned_staff_id" name="assigned_staff_id">
       <option value="">-- Select Staff --</option>
       {% for staff in staff %}
@@ -44,11 +44,11 @@
       {% endfor %}
     </select>
   </div>
-  <div class="col-md-6">
+  <div class="col-md-3">
     <label for="start_date" class="form-label"><strong>Start Date</strong></label>
     <input type="date" class="form-control" id="start_date" name="start_date" required>
   </div>
-  <div class="col-md-6">
+  <div class="col-md-3">
     <label for="end_date" class="form-label"><strong>End Date</strong></label>
     <input type="date" class="form-control" id="end_date" name="end_date" required>
   </div>
@@ -59,6 +59,10 @@
       <option value="Approved">Approved</option>
       <option value="Open">Open</option>
     </select>
+  </div>
+  <div class="col-md-3">
+    <label for="image" class="form-label"><strong>Select Trek Image</strong></label>
+    <input type="file" class="form-control" id="image" name="image">
   </div>
   <br>
   <br>
