@@ -3,7 +3,8 @@
 
 {% block content %}
 {% if treks %}
-    <h1 class="text-center mt-4"> View all treks  <i class="fa-solid fa-route"></i> </h1>
+    <h1 class=" mt-4"> View All Treks  <i class="fa-solid fa-route"></i>
+    <a href="{{ url_for('add_trek')}}" class="btn btn-success mt-2 float-end"><i class="fa-solid fa-plus"></i>Add A New Trek </a> </h1></h1>
     <br>
     {% for trek in treks %}
         <div class="card mb-3 col-md-12">
@@ -50,6 +51,12 @@
             </div>
         </div>
     {%endfor%}
+    <br> 
+{% else %}
+<h1 class="text-center mt-4"> No Treks Created <i class="fa-regular fa-face-frown"></i></h1>
+<div class="text-center mt-4">
+<a class="btn btn-info mt-4 text-center" href="{{ url_for('add_trek') }}"> <i class="fa-solid fa-plus"></i> Click here to Create A New Trek</a>
+</div>
 {% endif %}
 
 <br>

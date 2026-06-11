@@ -1,0 +1,111 @@
+{% extends 'layout.html' %}
+{% block title %}User Dashboard{% endblock %}
+
+{% block content %}
+<h1><i class="fa-solid fa-user mt mt-4"></i> Dashboard
+<a href="{{ url_for('user_dashboard')}}" class="btn btn-success mt-4 float-end"><i class="fa-solid fa-book"></i> View Your Bookings </a> </h1></h1>
+<p  class="text-muted">Welcome, {{ current_user.fullname }}!</p>
+<br>
+<br>
+<h3><strong>Explore Treks</strong></h3>
+<br>
+{% if treks %}
+    {% for trek in treks %}
+        <div class="card mb-3 col-md-12">
+            <div class="row g-1">
+                <div class="col-md-4">
+                <img src="{{ get_trek_image(trek.id) }}" class="img-fluid rounded-start h-100" alt="{{ trek.name }}" style="object-fit: cover;">
+                </div>
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5 class="card-title"><strong>{{ trek.name }}</strong></h5>
+                                <p class="card-text"><strong>Location: </strong>{{ trek.location }}</p>
+                                <p class="card-text"><strong>Duration: </strong>{{ trek.duration }} days</p>
+                                <p class="card-text"><strong>Start Date: </strong>{{ trek.start_date }}</p>
+                                <p class="card-text"><strong>End Date: </strong>{{ trek.end_date }}</p>
+                            </div>
+                            <div>
+                            <p class="card-text"><strong>Slots Available: </strong>{{ trek.available_slots }} slots</p>
+                            <h5 class="card-text badge bg-success"><strong>Status: Open </strong></h5> 
+                            <p class="card-text"><strong>Assigned Staff: </strong>{{ trek.assigned_staff.fullname if trek.assigned_staff.fullname else 'No Staff Assigned' }}</p>
+                            <h5 class="card-text mb-3">
+                                {% if trek.difficulty == 'Easy' %}
+                                <span class="badge bg-success">Easy</span>
+                                {% elif trek.difficulty == 'Moderate' %}
+                                <span class="badge bg-warning">Moderate</span>
+                                {% elif trek.difficulty == 'Hard' %}
+                                <span class="badge bg-danger">Hard</span>
+                                {% endif %}
+                            </h5>
+                            <p class="card-text"><strong>Price:</strong><i class="fa-solid fa-indian-rupee-sign"></i>{{ trek.price }}</p>
+                            </div>
+                            <div>
+                                <a href="{{ url_for('user_trek_booking', trek_id=trek.id) }}" class="btn btn-primary">Book This Trek</a>
+                            </div>
+                            
+                        </div>
+                       
+                    </div>
+                    <div class="card-footer ">
+                         <p class="card-text "><strong>Description:</strong>{{ trek.description if trek.description else 'No Description Available' }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {%endfor%}
+    <br> 
+{% else %}
+<h1 class="text-center mt-4"> Oops! No Treks Are Available At The Moment <i class="fa-regular fa-face-sad-tear"></i><br> Stay Tuned For Upcoming New Treks </h1>
+{% endif %}
+{% if upcoming_treks %}
+    <h3 class="mt-4"><strong>Upcoming Treks</strong></h3>
+    <br>
+    {% for trek in upcoming_treks %}
+        <div class="card mb-3 col-md-12">
+            <div class="row g-1">
+                <div class="col-md-4">
+                <img src="{{ get_trek_image(trek.id) }}" class="img-fluid rounded-start h-100" alt="{{ trek.name }}" style="object-fit: cover;">
+                </div>
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5 class="card-title"><strong>{{ trek.name }}</strong></h5>
+                                <p class="card-text"><strong>Location: </strong>{{ trek.location }}</p>
+                                <p class="card-text"><strong>Duration: </strong>{{ trek.duration }} days</p>
+                                <p class="card-text"><strong>Start Date: </strong>{{ trek.start_date }}</p>
+                                <p class="card-text"><strong>End Date: </strong>{{ trek.end_date }}</p>
+                            </div>
+                            <div>
+                            <p class="card-text"><strong>Slots Available: </strong>{{ trek.available_slots }} slots</p>
+                            <h5 class="card-text badge bg-info"><strong>Upcoming </strong></h5> 
+                            <p class="card-text"><strong>Assigned Staff: </strong>{{ trek.assigned_staff.fullname if trek.assigned_staff.fullname else 'No Staff Assigned' }}</p>
+                            <h5 class="card-text mb-3">
+                                {% if trek.difficulty == 'Easy' %}
+                                <span class="badge bg-success">Easy</span>
+                                {% elif trek.difficulty == 'Moderate' %}
+                                <span class="badge bg-warning">Moderate</span>
+                                {% elif trek.difficulty == 'Hard' %}
+                                <span class="badge bg-danger">Hard</span>
+                                {% endif %}
+                            </h5>
+                            <p class="card-text"><strong>Price: </strong><i class="fa-solid fa-indian-rupee-sign"></i>{{ trek.price }}</p>
+                            </div>
+                            <div>
+                                <a class="btn btn-secondary" style="pointer-events: none; cursor: default;">Coming Soon</a>
+                            </div>
+                            
+                        </div>
+                       
+                    </div>
+                    <div class="card-footer ">
+                         <p class="card-text "><strong>Description:</strong>{{ trek.description if trek.description else 'No Description Available' }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {%endfor%}
+{% endif %}
+{% endblock %}

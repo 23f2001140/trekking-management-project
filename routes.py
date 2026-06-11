@@ -378,4 +378,25 @@ def staff_dashboard():
 @login_required
 @user_required
 def user_dashboard():
-    return render_template('user.html')
+    treks=Trek.query.filter_by(status='Open').all()
+    upcoming_treks=Trek.query.filter_by(status='Approved').all()
+    return render_template('users/user.html', treks=treks, upcoming_treks=upcoming_treks, get_trek_image=get_trek_image)
+
+@app.route('/user/trek_booking/<int:trek_id>')
+@login_required
+@user_required
+def user_trek_booking(trek_id):
+    trek=Trek.query.get(trek_id)
+    if not trek:
+        flash('Trek not found!', 'danger')
+        return redirect(url_for('user_dashboard'))
+    if(Booking.query.filter_by(user_id=current_user.id, trek_id=trek_id).first()):
+        flash('You have already booked this trek!', 'danger')
+        return redirect(url_for('user_dashboard'))
+    
+    booking_date=datetime.now().date()
+    booking=Booking(user_id=current_user.id, trek_id=trek_id, booking_date=booking_date)
+    db.session.add(booking)
+    db.session.commit()
+    flash('Booking successful!', 'success')
+    return redirect(url_for('user_dashboard'))
