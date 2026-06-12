@@ -380,7 +380,9 @@ def staff_dashboard():
 def user_dashboard():
     treks=Trek.query.filter_by(status='Open').all()
     upcoming_treks=Trek.query.filter_by(status='Approved').all()
-    return render_template('users/user.html', treks=treks, upcoming_treks=upcoming_treks, get_trek_image=get_trek_image)
+    bookings=Booking.query.filter_by(user_id=current_user.id).all()
+    bookings_status={ booking.trek_id: booking.status for booking in bookings }
+    return render_template('users/user.html', treks=treks, upcoming_treks=upcoming_treks, bookings_status=bookings_status, get_trek_image=get_trek_image)
 
 @app.route('/user/trek_booking/<int:trek_id>')
 @login_required
@@ -393,10 +395,39 @@ def user_trek_booking(trek_id):
     if(Booking.query.filter_by(user_id=current_user.id, trek_id=trek_id).first()):
         flash('You have already booked this trek!', 'danger')
         return redirect(url_for('user_dashboard'))
-    
+    if trek.available_slots < 1:
+        flash('Slots Are Full!', 'danger')
+        return redirect(url_for('user_dashboard'))
+    trek.available_slots -= 1
     booking_date=datetime.now().date()
     booking=Booking(user_id=current_user.id, trek_id=trek_id, booking_date=booking_date)
     db.session.add(booking)
     db.session.commit()
     flash('Booking successful!', 'success')
+    return redirect(url_for('user_dashboard'))
+
+@app.route('/user/my_bookings')
+@login_required
+@user_required
+def my_bookings():
+    bookings=Booking.query.filter_by(user_id=current_user.id).all()
+    ongoing_bookings=[booking for booking in bookings if booking.status=='Booked' and booking.trek.status in ['Open', 'Closed', 'Started']]
+    past_bookings=[booking for booking in bookings if booking.status=='Cancelled' or booking.trek.status == 'Completed']
+    return render_template('users/my_bookings.html', ongoing_bookings=ongoing_bookings, past_bookings=past_bookings, get_trek_image=get_trek_image)
+
+@app.route('/user/cancel_booking/<int:booking_id>')
+@login_required
+@user_required
+def cancel_booking(booking_id):
+    booking=Booking.query.get(booking_id)
+    if not booking:
+        flash('Booking not found!', 'danger')
+        return redirect(url_for('user_dashboard'))
+    if booking.user_id != current_user.id:
+        flash('You are not authorized to cancel this booking!', 'danger')
+        return redirect(url_for('user_dashboard'))
+    booking.trek.available_slots += 1
+    booking.status='Cancelled'
+    db.session.commit()
+    flash('Booking cancelled successfully!', 'success')
     return redirect(url_for('user_dashboard'))

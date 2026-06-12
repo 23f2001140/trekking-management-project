@@ -19,8 +19,8 @@
                                 <h5 class="card-title"><strong>{{ trek.name }}</strong></h5>
                                 <p class="card-text"><strong>Location: </strong>{{ trek.location }}</p>
                                 <p class="card-text"><strong>Duration: </strong>{{ trek.duration }} days</p>
-                                <p class="card-text"><strong>Start Date: </strong>{{ trek.start_date }}</p>
-                                <p class="card-text"><strong>End Date: </strong>{{ trek.end_date }}</p>
+                                <p class="card-text"><strong>Start Date: </strong>{{ trek.start_date.strftime('%B %d, %Y') }}</p>
+                                <p class="card-text"><strong>End Date: </strong>{{ trek.end_date.strftime('%B %d, %Y') }}</p>
                             </div>
                             <div>
                             <p class="card-text"><strong>Slots Available: </strong>{{ trek.available_slots }} slots</p>

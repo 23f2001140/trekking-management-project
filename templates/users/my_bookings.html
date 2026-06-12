@@ -1,0 +1,114 @@
+{% extends 'layout.html' %}
+{% block title %}My Bookings{% endblock %}
+{% block content %}
+<h1><i class="fa-solid fa-book-open-reader mt mt-4"></i> My All Bookings</h1>
+<p  class="text-muted">Hello, {{ current_user.fullname }}! Here are your bookings.</p>
+<br>
+<br>
+{% if ongoing_bookings %}
+<h3><strong>Active Treks</strong></h3>
+<br>
+        {% for booking in ongoing_bookings %}
+        <div class="card mb-3 col-md-12">
+              <div class="card-header text-center">Booked on {{ booking.booking_date.strftime('%B %d, %Y') }}</div>
+            <div class="row g-1">
+                <div class="col-md-4">
+                <img src="{{ get_trek_image(booking.trek_id) }}" class="img-fluid rounded-start h-100" alt="{{ booking.trek.name }}" style="object-fit: cover;">
+                </div>
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5 class="card-title"><strong>{{ booking.trek.name }}</strong></h5>
+                                <p class="card-text"><strong>Location: </strong>{{ booking.trek.location }}</p>
+                                <p class="card-text"><strong>Duration: </strong>{{ booking.trek.duration }} days</p>
+                                <p class="card-text"><strong>Start Date: </strong>{{ booking.trek.start_date.strftime('%B %d, %Y') }}</p>
+                                <p class="card-text"><strong>End Date: </strong>{{ booking.trek.end_date.strftime('%B %d, %Y') }}</p>
+                            </div>
+                            <div>
+                            <p class="card-text"><strong>Slots Available: </strong>{{ booking.trek.available_slots }} slots</p>
+                            <h5 class="card-text badge bg-{{'light' if booking.trek.status=='Started' else 'success' if booking.trek.status=='Open' else 'secondary' }}"><strong>Status: </strong>{{ booking.trek.status }}</h5> 
+                            <p class="card-text"><strong>Assigned Staff: </strong>{{ booking.trek.assigned_staff.fullname if booking.trek.assigned_staff.fullname else 'No Staff Assigned' }}</p>
+                            <h5 class="card-text mb-3">
+                                {% if booking.trek.difficulty == 'Easy' %}
+                                <span class="badge bg-success">Easy</span>
+                                {% elif booking.trek.difficulty == 'Moderate' %}
+                                <span class="badge bg-warning">Moderate</span>
+                                {% elif booking.trek.difficulty == 'Hard' %}
+                                <span class="badge bg-danger">Hard</span>
+                                {% endif %}
+                            </h5>
+                            <p class="card-text"><strong>Price:</strong><i class="fa-solid fa-indian-rupee-sign"></i>{{ booking.trek.price }}</p>
+                            </div>
+                            <div>
+                                <a href="{{ url_for('cancel_booking', booking_id=booking.id) }}" class="btn btn-outline-danger"> <i class="fa-regular fa-circle-xmark"></i> Cancel Trek</a>
+                            </div>
+                            
+                        </div>
+                    
+                    </div>
+                    <div class="card-footer ">
+                        <p class="card-text "><strong>Description:</strong>{{ booking.trek.description if booking.trek.description else 'No Description Available' }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+{% endif %}
+{% if past_bookings %}
+<h3><strong>Past Bookings</strong></h3>
+<br>
+        {% for booking in past_bookings %}
+            <div class="card mb-3 col-md-12">
+            <div class="card-header text-center">Booked on {{ booking.booking_date.strftime('%B %d, %Y') }}</div>
+            <div class="row g-1">
+                <div class="col-md-4">
+                <img src="{{ get_trek_image(booking.trek_id) }}" class="img-fluid rounded-start h-100" alt="{{ booking.trek.name }}" style="object-fit: cover;">
+                </div>
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5 class="card-title"><strong>{{ booking.trek.name }}</strong></h5>
+                                <p class="card-text"><strong>Location: </strong>{{ booking.trek.location }}</p>
+                                <p class="card-text"><strong>Duration: </strong>{{ booking.trek.duration }} days</p>
+                                <p class="card-text"><strong>Start Date: </strong>{{ booking.trek.start_date.strftime('%B %d, %Y') }}</p>
+                                <p class="card-text"><strong>End Date: </strong>{{ booking.trek.end_date.strftime('%B %d, %Y') }}</p>
+                            </div>
+                            <div>
+                            <h5 class="card-text badge bg-{{'info' if booking.trek.status=='Completed' else 'success' }}"><strong>Status: </strong>{{ booking.trek.status }}</h5> 
+                            <p class="card-text"><strong>Assigned Staff: </strong>{{ booking.trek.assigned_staff.fullname if booking.trek.assigned_staff.fullname else 'No Staff Assigned' }}</p>
+                            <h5 class="card-text mb-3">
+                                {% if booking.trek.difficulty == 'Easy' %}
+                                <span class="badge bg-success">Easy</span>
+                                {% elif booking.trek.difficulty == 'Moderate' %}
+                                <span class="badge bg-warning">Moderate</span>
+                                {% elif booking.trek.difficulty == 'Hard' %}
+                                <span class="badge bg-danger">Hard</span>
+                                {% endif %}
+                            </h5>
+                            <p class="card-text"><strong>Price:</strong><i class="fa-solid fa-indian-rupee-sign"></i>{{ booking.trek.price }}</p>
+                            </div>
+                            <div>
+                                <a class="btn btn-secondary" style="pointer-events: none; cursor: default;"> {{ 'Cancelled' if booking.status == 'Cancelled' else 'Completed' }}</a>
+                            </div>
+                            
+                        </div>
+                    
+                    </div>
+                    <div class="card-footer ">
+                        <p class="card-text "><strong>Description:</strong>{{ booking.trek.description if booking.trek.description else 'No Description Available' }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+{% endif %}
+{% if not ongoing_bookings and not past_bookings %}
+    <h1 class="text-center mt-4"> No Bookings Found <i class="fa-regular fa-face-sad-tear"></i><br> Start Your Journey With Us With Your First Booking </h1>
+    <br>
+    <div class="text-center mt-4">
+    <a href="{{ url_for('user_dashboard') }}" class="btn btn-primary">Book Your First Trek</a>
+    </div>
+{% endif %}
+{% endblock %}
