@@ -1,0 +1,82 @@
+{% extends 'layout.html' %}
+{% block title %}Manage Trek{% endblock %}
+
+{% block content %}
+<h1>Manage Trek And View Participants</h1>
+<p>Hello, {{ current_user.fullname }}! Here you can view participants and update the status and slots of the trek.</p>
+<br>
+<br>
+<div class="row g-3 d-flex justify-content-between">
+    <div class="card" style="width: 18rem;">
+        <div class="card-header">
+            {{ trek.name }}
+        </div>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">Location: {{ trek.location }}</li>
+            <li class="list-group-item">Difficulty: {{ trek.difficulty }}</li>
+            <li class="list-group-item">Duration: {{ trek.duration }} days</li>
+            <li class="list-group-item">Start Date: {{ trek.start_date.strftime('%B %d, %Y') }}</li>
+            <li class="list-group-item">End Date: {{ trek.end_date.strftime('%B %d, %Y') }}</li>
+        </ul>
+    </div>
+    <div class="col-md-3">
+        <form action="{{ url_for('manage_trek', trek_id=trek.id) }}" method="POST">
+            <label for="status" class="form-label"><strong>Change Status</strong></label>
+                <select class="form-select" id="status" name="status">
+                    <option value="">-- Status --</option>
+                    <option value="Open" {% if trek.status == 'Open' %}selected{% endif %}>Open</option>
+                    <option value="Closed" {% if trek.status == 'Closed' %}selected{% endif %}>Closed</option>
+                    <option value="Started" {% if trek.status == 'Started' %}selected{% endif %}>Started</option>
+                    <option value="Completed" {% if trek.status == 'Completed' %}selected{% endif %}>Completed</option>
+                </select>
+                <button type="submit" class="btn btn-primary mt-2">Update Status</button>
+            </form>
+    </div>
+    <div class="col-md-3">
+        <form action="{{ url_for('manage_trek', trek_id=trek.id) }}" method="POST">
+                <label for="available_slots" class="form-label"><strong>Available Slots</strong></label>
+                <input type="number" class="form-control" id="available_slots" name="available_slots" value="{{ trek.available_slots }}" required>
+                <button type="submit" class="btn btn-primary mt-2">Update Slots</button>
+        </form>
+    </div>
+</div>
+<br>
+<br>
+{% if trek_users or cancelled_users %}
+<h3><strong>Participants</strong></h3>
+<br>
+<table class="table table-hover">
+    <thead class="table-primary">
+        <tr>
+        <th scope="col">Name</th>
+        <th scope="col">Phone Number</th>
+        <th scope="col">Booked On</th>
+        <th scope="col">Status</th>
+        </tr>
+    </thead>
+    {% for booking in trek_users %}
+    <tbody>
+        <tr class="table-success">
+        <th scope="row">{{booking.user.fullname}}</th>
+        <td>{{booking.user.phone}}</td>
+        <td>{{booking.booking_date.strftime('%B %d, %Y')}}</td>
+        <td>{{booking.status}}</td>
+        </tr>
+    </tbody>
+    {% endfor %}
+    {% for booking in cancelled_users %}
+    <tbody>
+        <tr class="table-danger">
+        <th scope="row">{{booking.user.fullname}}</th>
+        <td>{{booking.user.phone}}</td>
+        <td>{{booking.booking_date.strftime('%B %d, %Y')}}</td>
+        <td>{{booking.status}}</td>
+        </tr>
+    </tbody>
+    {% endfor %}
+</table>
+{% else %}
+<h1 class="text-center mt-4"> No Participants Yet <i class="fa-regular fa-face-sad-tear"></i></h1>
+<br>
+{% endif %}
+{% endblock %}

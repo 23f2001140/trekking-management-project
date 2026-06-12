@@ -38,7 +38,7 @@
                                 <span class="badge bg-danger">Hard</span>
                                 {% endif %}
                             </h5>
-                            <p class="card-text"><strong>Price:</strong><i class="fa-solid fa-indian-rupee-sign"></i>{{ booking.trek.price }}</p>
+                            <p class="card-text"><strong>Price Paid:</strong><i class="fa-solid fa-indian-rupee-sign"></i>{{ booking.trek.price }}</p>
                             </div>
                             <div>
                                 <a href="{{ url_for('cancel_booking', booking_id=booking.id) }}" class="btn btn-outline-danger"> <i class="fa-regular fa-circle-xmark"></i> Cancel Trek</a>

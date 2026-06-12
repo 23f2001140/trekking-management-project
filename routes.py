@@ -253,6 +253,10 @@ def add_trek():
         
         duration = (end_date - start_date).days
         
+        if available_slots.isnumeric() and int(available_slots) < 0:
+            flash('Slots cannot be negative!', 'danger')
+            return redirect(url_for('add_trek'))
+        
         if not assigned_staff_id:
             if status in ['Open', 'Approved']:
                 flash('You cannot add a trek with status as Open or Approved without assigning staff!', 'warning')
@@ -311,6 +315,9 @@ def trek_update(trek_id):
             return redirect(url_for('trek_update', trek_id=trek_id))
         
         duration = (end_date - start_date).days
+        if available_slots.isnumeric() and int(available_slots) < 0:
+            flash('Slots cannot be negative!', 'danger')
+            return redirect(url_for('add_trek'))
         
         if not assigned_staff_id:
             if status in ['Open', 'Approved', 'Closed', 'Completed']:
@@ -368,11 +375,6 @@ def delete_trek(trek_id):
     return redirect(url_for('trek_details'))
 
 
-@app.route('/staff')
-@login_required
-@staff_required
-def staff_dashboard():
-    return render_template('staff/staff.html')
 
 @app.route('/user')
 @login_required
@@ -392,8 +394,14 @@ def user_trek_booking(trek_id):
     if not trek:
         flash('Trek not found!', 'danger')
         return redirect(url_for('user_dashboard'))
-    if(Booking.query.filter_by(user_id=current_user.id, trek_id=trek_id).first()):
+    if trek.status != 'Open':
+        flash('You cannot book this trek!', 'danger')
+        return redirect(url_for('user_dashboard'))
+    if(Booking.query.filter_by(user_id=current_user.id, trek_id=trek_id, status='Booked').first()):
         flash('You have already booked this trek!', 'danger')
+        return redirect(url_for('user_dashboard'))
+    if(Booking.query.filter_by(user_id=current_user.id, trek_id=trek_id, status='Cancelled').first()):
+        flash('You have cancelled this booking! Cannot book again!', 'danger')
         return redirect(url_for('user_dashboard'))
     if trek.available_slots < 1:
         flash('Slots Are Full!', 'danger')
@@ -431,3 +439,143 @@ def cancel_booking(booking_id):
     db.session.commit()
     flash('Booking cancelled successfully!', 'success')
     return redirect(url_for('user_dashboard'))
+
+@app.route('/user/profile', methods=['GET', 'POST'])
+@login_required
+@user_required
+def user_profile():
+    if request.method == 'POST':
+        uname = request.form['username']
+        fullname = request.form['fullname']
+        phone = request.form['phone']
+        password = request.form['password']
+        cpassword = request.form['cpassword']
+        confirm_password = request.form['confirm_password']
+        
+        if(User.query.filter_by(username=uname).first() and uname != current_user.username):
+            flash('Username already exists!', 'danger')
+            return redirect(url_for('user_profile'))
+        
+        if not fullname or not phone:
+            flash('Full name and phone number are required!', 'danger')
+            return redirect(url_for('user_profile'))
+        
+        if not check_password_hash(current_user.passhash, cpassword):
+            flash('Incorrect current password!', 'danger')
+            return redirect(url_for('user_profile'))
+        
+        if(uname != current_user.username):
+            current_user.username = uname
+        current_user.fullname = fullname
+        current_user.phone = phone
+        
+        if password:
+            if password != confirm_password:
+                flash('New passwords do not match!', 'danger')
+                return redirect(url_for('user_profile'))
+            current_user.passhash = generate_password_hash(password)
+        
+        db.session.commit()
+        flash('Profile updated successfully!', 'success')
+        return redirect(url_for('user_profile'))
+    
+    return render_template('users/user_profile.html')
+
+
+@app.route('/staff')
+@login_required
+@staff_required
+def staff_dashboard():
+    assigned_treks=Trek.query.filter_by(assigned_staff_id=current_user.id).all()
+    trek_participants={}
+    for trek in assigned_treks:
+        trek_participants[trek.id]=len([booking for booking in trek.bookings if booking.status == 'Booked'])
+    return render_template('staff/staff.html', assigned_treks=assigned_treks, trek_participants=trek_participants, get_trek_image=get_trek_image)
+
+@app.route('/staff/manage_trek/<int:trek_id>', methods=['GET', 'POST'])
+@login_required
+@staff_required
+def manage_trek(trek_id):
+    if request.method == 'POST':
+        trek=Trek.query.get(trek_id)
+        if not trek:
+            flash('Trek not found!', 'danger')
+            return redirect(url_for('staff_dashboard'))
+        if trek.assigned_staff_id != current_user.id:
+            flash('You are not authorized to manage this trek!', 'danger')
+            return redirect(url_for('staff_dashboard'))
+        status = request.form.get('status')
+        available_slots = request.form.get('available_slots')
+        if(status):
+            if status in ['Open', 'Closed', 'Started', 'Completed']:
+                trek.status = status
+                db.session.commit()
+                flash('Trek status updated successfully!', 'success')
+                return redirect(url_for('manage_trek', trek_id=trek_id))
+            else:
+                flash('Invalid status!', 'danger')
+                return redirect(url_for('manage_trek', trek_id=trek_id))
+        if available_slots.isnumeric():
+            if int(available_slots) < 0:
+                flash('Slots cannot be negative!', 'danger')
+                return redirect(url_for('manage_trek', trek_id=trek_id))
+            else:
+                trek.available_slots = int(available_slots)
+                db.session.commit()
+                flash('Slots updated successfully!', 'success')
+                return redirect(url_for('manage_trek', trek_id=trek_id))
+        else:
+            flash('Please Enter Numeric Value for slots!', 'danger')
+            return redirect(url_for('manage_trek', trek_id=trek_id))
+    trek=Trek.query.get(trek_id)
+    trek_users=[booking for booking in trek.bookings if booking.status == 'Booked']
+    cancelled_users=[booking for booking in trek.bookings if booking.status == 'Cancelled']
+    
+    if not trek:
+        flash('Trek not found!', 'danger')
+        return redirect(url_for('staff_dashboard'))
+    if trek.assigned_staff_id != current_user.id:
+        flash('You are not authorized to manage this trek!', 'danger')
+        return redirect(url_for('staff_dashboard'))
+    return render_template('staff/manage_trek.html', trek=trek, trek_users=trek_users, cancelled_users=cancelled_users, get_trek_image=get_trek_image)
+
+@app.route('/staff/profile', methods=['GET', 'POST'])
+@login_required
+@staff_required
+def staff_profile():
+    if request.method == 'POST':
+        uname = request.form['username']
+        fullname = request.form['fullname']
+        phone = request.form['phone']
+        password = request.form['password']
+        cpassword = request.form['cpassword']
+        confirm_password = request.form['confirm_password']
+        
+        if(User.query.filter_by(username=uname).first() and uname != current_user.username):
+            flash('Username already exists!', 'danger')
+            return redirect(url_for('staff_profile'))
+        
+        if not fullname or not phone:
+            flash('Full name and phone number are required!', 'danger')
+            return redirect(url_for('staff_profile'))
+        
+        if not check_password_hash(current_user.passhash, cpassword):
+            flash('Incorrect current password!', 'danger')
+            return redirect(url_for('staff_profile'))
+        
+        if(uname != current_user.username):
+            current_user.username = uname
+        current_user.fullname = fullname
+        current_user.phone = phone
+        
+        if password:
+            if password != confirm_password:
+                flash('New passwords do not match!', 'danger')
+                return redirect(url_for('staff_profile'))
+            current_user.passhash = generate_password_hash(password)
+        
+        db.session.commit()
+        flash('Profile updated successfully!', 'success')
+        return redirect(url_for('staff_profile'))
+    
+    return render_template('staff/staff_profile.html')

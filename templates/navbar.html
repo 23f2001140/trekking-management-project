@@ -36,26 +36,23 @@
             
             {% elif current_user.role == 'staff' %}
               <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="#">Profile</a>
+                <a class="nav-link active" aria-current="page" href="{{ url_for('staff_dashboard') }}">Home</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="#">Assigned Treks</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">Bookings</a>
+                <a class="nav-link active" aria-current="page" href="{{ url_for('staff_profile') }}">Profile</a>
               </li>
               <li class="nav-item">
                   <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
               </li>
             {% elif current_user.role == 'user' %}
               <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="#">Profile</a>
+                <a class="nav-link active" aria-current="page" href="{{ url_for('user_dashboard') }}">Home</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="#">Current Booking</a>
-              </li> 
+                <a class="nav-link active" aria-current="page" href="{{ url_for('user_profile') }}">Profile</a>
+              </li>
               <li class="nav-item"> 
-                <a class="nav-link" href="#">Booking History</a>
+                <a class="nav-link" href="{{ url_for('my_bookings') }}">Booking History</a>
               </li>
               <li class="nav-item">
                   <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
