@@ -16,13 +16,16 @@
         {% else %}
             {% if current_user.role == 'admin' %}
               <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="{{ url_for('admin_dashboard') }}">Home</a>
+              </li>
+              <li class="nav-item">
                 <a class="nav-link active" aria-current="page" href="{{ url_for('admin_profile') }}">Profile</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="#">Users</a>
+                <a class="nav-link" href="{{ url_for('admin_users_details') }}">Users</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="#">Staffs</a>
+                <a class="nav-link" href="{{ url_for('admin_staff_details') }}">Staffs</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="{{url_for('trek_details')}}">Treks</a>

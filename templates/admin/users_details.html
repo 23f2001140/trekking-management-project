@@ -1,0 +1,63 @@
+{% extends "layout.html" %}
+{% block title %}Users Details{% endblock %}
+{% block content %}
+<h1>Users Details</h1>
+<p>Here you can view all the users in the system.</p>
+<br>
+<br>
+{% if users %}
+    <h1 class=" mt-4"> View All Users  <i class="fa-solid fa-user-group"></i></h1>
+    <br>
+
+    <table class="table table-hover">
+        <thead class="table-primary">
+            <tr>
+            <th scope="col">User id</th>
+            <th scope="col">Username</th>
+            <th scope="col">Full Name</th>
+            <th scope="col">Phone Number</th>
+            <th scope="col">Account Status</th>
+            <th scope="col">Action</th>
+            </tr>
+        </thead>
+        {% for user in users %}
+        {% if not user.is_blacklisted %}
+
+        <tbody>
+            <tr class="table-success">
+            <th scope="row">{{user.id}}</th>
+            <td>{{user.username}}</td>
+            <td>{{user.fullname}}</td>
+            <td>{{user.phone}}</td>
+            <td>{{'Blacklisted' if user.is_blacklisted else 'Active'}}</td>
+            <td>
+                <a href="{{ url_for('admin_blacklist_user', user_id=user.id) }}" class="btn btn-outline-danger"><i class="fa-solid fa-ban"></i>Blacklist</a>
+            </td>
+            </tr>
+        </tbody>
+        {% endif %}
+        {% endfor %}
+        {% for user in users %}
+        {% if user.is_blacklisted %}
+
+        <tbody>
+            <tr class="table-danger">
+            <th scope="row">{{user.id}}</th>
+            <td>{{user.username}}</td>
+            <td>{{user.fullname}}</td>
+            <td>{{user.phone}}</td>
+            <td>{{'Blacklisted' if user.is_blacklisted else 'Active'}}</td>
+            <td>
+                <a href="{{ url_for('admin_activate_user', user_id=user.id) }}" class="btn btn-outline-success"><i class="fa-regular fa-circle-check"></i>Activate</a>
+            </td>
+            </tr>
+        </tbody>
+        {% endif %}
+        {% endfor %}
+    </table>
+{% else %}
+<h1 class="text-center mt-4"> No Users Are There <i class="fa-regular fa-face-frown"></i></h1>
+{% endif %}
+<br>
+<br>
+{%endblock %}

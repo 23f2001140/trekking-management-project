@@ -1,0 +1,63 @@
+{% extends "layout.html" %}
+{% block title %}Staff Details{% endblock %}
+{% block content %}
+<h1>Staff Details</h1>
+<p>Here you can view all the staff in the system.</p>
+<br>
+<br>
+{% if staff %}
+    <h1 class=" mt-4"> View All Staff  <i class="fa-solid fa-user-group"></i></h1>
+    <br>
+
+    <table class="table table-hover">
+        <thead class="table-primary">
+            <tr>
+            <th scope="col">Staff id</th>
+            <th scope="col">Username</th>
+            <th scope="col">Staff Name</th>
+            <th scope="col">Phone Number</th>
+            <th scope="col">Account Status</th>
+            <th scope="col">Action</th>
+            </tr>
+        </thead>
+        {% for staff in staff %}
+        {% if not staff.is_blacklisted %}
+
+        <tbody>
+            <tr class="table-success">
+            <th scope="row">{{staff.id}}</th>
+            <td>{{staff.username}}</td>
+            <td>{{staff.fullname}}</td>
+            <td>{{staff.phone}}</td>
+            <td>{{'Blacklisted' if staff.is_blacklisted else 'Active'}}</td>
+            <td>
+                <a href="{{ url_for('admin_blacklist_staff', staff_id=staff.id) }}" class="btn btn-outline-danger"><i class="fa-solid fa-ban"></i>Blacklist</a>
+            </td>
+            </tr>
+        </tbody>
+        {% endif %} 
+        {% endfor %}
+        {% for staff in staff %}
+        {% if staff.is_blacklisted %}
+
+        <tbody>
+            <tr class="table-danger">
+            <th scope="row">{{staff.id}}</th>
+            <td>{{staff.username}}</td>
+            <td>{{staff.fullname}}</td>
+            <td>{{staff.phone}}</td>
+            <td>{{'Blacklisted' if staff.is_blacklisted else 'Active'}}</td>
+            <td>
+                <a href="{{ url_for('admin_activate_staff', staff_id=staff.id) }}" class="btn btn-outline-success"><i class="fa-regular fa-circle-check"></i>Activate</a>
+            </td>
+            </tr>
+        </tbody>
+        {% endif %}
+        {% endfor %}
+    </table>
+{% else %}
+<h1 class="text-center mt-4"> No Staff Are There <i class="fa-regular fa-face-frown"></i></h1>
+{% endif %}
+<br>
+<br>
+{%endblock %}

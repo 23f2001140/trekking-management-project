@@ -47,6 +47,16 @@ def user_required(function):
         return function(*args, **kwargs)
     return wrapper
 
+def not_blacklisted(function):
+    @wraps(function)
+    def wrapper(*args, **kwargs):
+        if current_user.is_blacklisted:
+            flash('Your account has been blacklisted. Please contact support at support@trekcentral.com.', 'danger')
+            logout_user()
+            return redirect(url_for('login'))
+        return function(*args, **kwargs)
+    return wrapper
+
 @app.route('/')
 def index():
     if current_user.is_authenticated:
@@ -374,11 +384,89 @@ def delete_trek(trek_id):
     flash('Trek deleted successfully!', 'success')
     return redirect(url_for('trek_details'))
 
+@app.route('/admin/users_details')
+@login_required
+@admin_required
+def admin_users_details():
+    users=User.query.filter_by(role='user').all()
+    return render_template('admin/users_details.html', users=users)
+
+@app.route('/admin/blacklist_user/<int:user_id>')
+@login_required
+@admin_required
+def admin_blacklist_user(user_id):
+    user=User.query.get(user_id)
+    if not user:
+        flash('User not found!', 'danger')
+        return redirect(url_for('admin_users_details'))
+    if user.is_blacklisted:
+        flash('User is already blacklisted!', 'danger')
+        return redirect(url_for('admin_users_details'))
+    user.is_blacklisted=True
+    db.session.commit()
+    flash('User blacklisted successfully!', 'success')
+    return redirect(url_for('admin_users_details'))
+
+@app.route('/admin/activate_user/<int:user_id>')
+@login_required
+@admin_required
+def admin_activate_user(user_id):
+    user=User.query.get(user_id)
+    if not user:
+        flash('User not found!', 'danger')
+        return redirect(url_for('admin_users_details'))
+    if not user.is_blacklisted:
+        flash('User is already activated!', 'danger')
+        return redirect(url_for('admin_users_details'))
+    user.is_blacklisted=False
+    db.session.commit()
+    flash('User activated successfully!', 'success')
+    return redirect(url_for('admin_users_details'))
+
+@app.route('/admin/staff_details')
+@login_required
+@admin_required
+def admin_staff_details():
+    staff=User.query.filter_by(role='staff' , staff_status='approved').all()
+    return render_template('admin/staff_details.html', staff=staff)
+
+@app.route('/admin/blacklist_staff/<int:staff_id>')
+@login_required
+@admin_required
+def admin_blacklist_staff(staff_id):
+    staff=User.query.get(staff_id)
+    if not staff:
+        flash('Staff not found!', 'danger')
+        return redirect(url_for('admin_staff_details'))
+    if staff.is_blacklisted:
+        flash('Staff is already blacklisted!', 'danger')
+        return redirect(url_for('admin_staff_details'))
+    staff.is_blacklisted=True
+    db.session.commit()
+    flash('Staff blacklisted successfully!', 'success')
+    return redirect(url_for('admin_staff_details'))
+
+@app.route('/admin/activate_staff/<int:staff_id>')
+@login_required
+@admin_required
+def admin_activate_staff(staff_id):
+    staff=User.query.get(staff_id)
+    if not staff:
+        flash('Staff not found!', 'danger')
+        return redirect(url_for('admin_staff_details'))
+    if not staff.is_blacklisted:
+        flash('Staff is already activated!', 'danger')
+        return redirect(url_for('admin_staff_details'))
+    staff.is_blacklisted=False
+    db.session.commit()
+    flash('Staff activated successfully!', 'success')
+    return redirect(url_for('admin_staff_details')) 
 
 
 @app.route('/user')
 @login_required
 @user_required
+@not_blacklisted
 def user_dashboard():
     treks=Trek.query.filter_by(status='Open').all()
     upcoming_treks=Trek.query.filter_by(status='Approved').all()
@@ -389,6 +477,7 @@ def user_dashboard():
 @app.route('/user/trek_booking/<int:trek_id>')
 @login_required
 @user_required
+@not_blacklisted
 def user_trek_booking(trek_id):
     trek=Trek.query.get(trek_id)
     if not trek:
@@ -417,6 +506,7 @@ def user_trek_booking(trek_id):
 @app.route('/user/my_bookings')
 @login_required
 @user_required
+@not_blacklisted
 def my_bookings():
     bookings=Booking.query.filter_by(user_id=current_user.id).all()
     ongoing_bookings=[booking for booking in bookings if booking.status=='Booked' and booking.trek.status in ['Open', 'Closed', 'Started']]
@@ -426,6 +516,7 @@ def my_bookings():
 @app.route('/user/cancel_booking/<int:booking_id>')
 @login_required
 @user_required
+@not_blacklisted
 def cancel_booking(booking_id):
     booking=Booking.query.get(booking_id)
     if not booking:
@@ -443,6 +534,7 @@ def cancel_booking(booking_id):
 @app.route('/user/profile', methods=['GET', 'POST'])
 @login_required
 @user_required
+@not_blacklisted
 def user_profile():
     if request.method == 'POST':
         uname = request.form['username']
@@ -485,6 +577,7 @@ def user_profile():
 @app.route('/staff')
 @login_required
 @staff_required
+@not_blacklisted
 def staff_dashboard():
     assigned_treks=Trek.query.filter_by(assigned_staff_id=current_user.id).all()
     trek_participants={}
@@ -495,6 +588,7 @@ def staff_dashboard():
 @app.route('/staff/manage_trek/<int:trek_id>', methods=['GET', 'POST'])
 @login_required
 @staff_required
+@not_blacklisted
 def manage_trek(trek_id):
     if request.method == 'POST':
         trek=Trek.query.get(trek_id)
@@ -542,6 +636,7 @@ def manage_trek(trek_id):
 @app.route('/staff/profile', methods=['GET', 'POST'])
 @login_required
 @staff_required
+@not_blacklisted
 def staff_profile():
     if request.method == 'POST':
         uname = request.form['username']
