@@ -3,7 +3,11 @@
 
 {% block content %}
 <h1>Staff Dashboard</h1>
+<div class='d-flex justify-content-between'>
 <p>Welcome, {{ current_user.fullname }}! Here you can view your assigned treks and manage bookings.</p>
+<h4>Total Participants<i class='fa-solid fa-user-group'></i>: {{ total_p }} <br>  </h4>
+</div>
+<p class='text-end'>(Excludes completed and cancelled bookings.) </p>
 <br>
 <br>
 {% if assigned_treks %}

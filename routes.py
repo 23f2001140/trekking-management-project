@@ -590,7 +590,12 @@ def staff_dashboard():
     trek_participants={}
     for trek in assigned_treks:
         trek_participants[trek.id]=len([booking for booking in trek.bookings if booking.status == 'Booked'])
-    return render_template('staff/staff.html', assigned_treks=assigned_treks, trek_participants=trek_participants, get_trek_image=get_trek_image)
+    total_p=0
+    for trek in assigned_treks:
+        if trek.status != 'Completed':
+            total_p += len([booking for booking in trek.bookings if booking.status == 'Booked'])
+        
+    return render_template('staff/staff.html', assigned_treks=assigned_treks, trek_participants=trek_participants, total_p=total_p, get_trek_image=get_trek_image)
 
 @app.route('/staff/manage_trek/<int:trek_id>', methods=['GET', 'POST'])
 @login_required
