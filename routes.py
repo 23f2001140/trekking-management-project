@@ -460,7 +460,14 @@ def admin_activate_staff(staff_id):
     staff.is_blacklisted=False
     db.session.commit()
     flash('Staff activated successfully!', 'success')
-    return redirect(url_for('admin_staff_details')) 
+    return redirect(url_for('admin_staff_details'))
+
+@app.route('/admin/booking_details')
+@login_required
+@admin_required
+def admin_booking_details():
+    bookings=Booking.query.all()
+    return render_template('admin/admin_bookings.html', bookings=bookings)
 
 
 @app.route('/user')
