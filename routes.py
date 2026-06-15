@@ -479,6 +479,19 @@ def user_dashboard():
     upcoming_treks=Trek.query.filter_by(status='Approved').all()
     bookings=Booking.query.filter_by(user_id=current_user.id).all()
     bookings_status={ booking.trek_id: booking.status for booking in bookings }
+    difficulty=request.args.get('difficulty')
+    location=request.args.get('location')
+    
+    if difficulty and location:
+        treks=Trek.query.filter(Trek.difficulty==difficulty , Trek.location.ilike('%'+location+'%') , Trek.status=='Open').all()
+        upcoming_treks=Trek.query.filter(Trek.difficulty==difficulty , Trek.location.ilike('%'+location+'%') , Trek.status=='Approved').all()
+    elif difficulty:
+        treks=Trek.query.filter_by(difficulty=difficulty , status='Open').all()
+        upcoming_treks=Trek.query.filter_by(difficulty=difficulty , status='Approved').all()
+    elif location:
+        treks=Trek.query.filter(Trek.location.ilike('%'+location+'%') , Trek.status=='Open').all()
+        upcoming_treks=Trek.query.filter(Trek.location.ilike('%'+location+'%') , Trek.status=='Approved').all()
+
     return render_template('users/user.html', treks=treks, upcoming_treks=upcoming_treks, bookings_status=bookings_status, get_trek_image=get_trek_image)
 
 @app.route('/user/trek_booking/<int:trek_id>')

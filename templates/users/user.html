@@ -7,7 +7,20 @@
 <p  class="text-muted">Welcome, {{ current_user.fullname }}!</p>
 <br>
 <br>
-<h3><strong>Explore Treks</strong></h3>
+<div class='d-flex justify-content-between align-items-center'>
+    <h3><strong>Explore Treks</strong></h3>
+
+    <form class="d-flex align-items-center gap-2" role="search" method="GET">
+        <select class="form-select" id="difficulty" name="difficulty">
+            <option value="">Select Difficulty</option>
+            <option value="Easy" {% if request.args.get('difficulty') == 'Easy' %}selected{% endif %}>Easy</option>
+            <option value="Moderate" {% if request.args.get('difficulty') == 'Moderate' %}selected{% endif %}>Moderate</option>
+            <option value="Hard" {% if request.args.get('difficulty') == 'Hard' %}selected{% endif %}>Hard</option>
+        </select>
+        <input class="form-control w-auto" style="min-width: 250px;" type="search" placeholder="Search Location" aria-label="location" id="location" name="location" value="{{ request.args.get('location', '') }}">
+        <button class="btn btn-outline-success d-flex align-items-center gap-1" type="submit"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
+    </form>
+</div>
 <br>
 {% if treks %}
     {% for trek in treks %}
