@@ -1,10 +1,8 @@
 {% extends "layout.html" %}
 {% block title %}Staff Details{% endblock %}
 {% block content %}
-<h1>Staff Details</h1>
-<p>Here you can view all the staff in the system.</p>
 {% if staff %}
-    <h1 class=" mt-4"> View All Staff  <i class="fa-solid fa-user-group"></i></h1>
+    <h3 class=" mt-4"> View All Staff Of <strong>TREKCENTRAL</strong>  <i class="fa-solid fa-user-group"></i></h3>
     <br>
     <form class="d-flex align-items-center gap-2" role="search" method="GET">
         <input class="form-control w-50" type="search" placeholder="Search by Name or Staff id" aria-label="staff" id="staff" name="staff" value="{{ request.args.get('staff', '') }}">
@@ -12,7 +10,7 @@
     </form>
     <br>
 
-    <table class="table table-hover">
+    <table class="table table-hover shadow-lg p-4">
         <thead class="table-primary">
             <tr>
             <th scope="col">Staff id</th>

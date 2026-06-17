@@ -1,0 +1,13 @@
+{% extends "layout.html" %}
+{% block title %}Delete Trek Confirmation{% endblock %}
+{% block content %}
+<br>
+<h2 class="text-center"><i class="fa-solid fa fa-exclamation"></i> Are you sure want to delete this trek?</h2>
+<br>
+<h3 class="text-center">Once deleted, you cannot recover this trek.</h3>
+
+<form action="{{ url_for('delete_trek', trek_id=trek_id) }}" method="POST" class="text-center mt-5">
+    <button type="submit" class="btn btn-danger">Yes, Delete Trek</button>
+    <a href="{{ url_for('trek_details') }}" class="btn btn-primary ms-2">No, Go Back</a>
+</form>
+{% endblock %}

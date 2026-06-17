@@ -1,0 +1,14 @@
+{% extends 'layout.html' %}
+{% block title %}Cancel Booking Confirmation{% endblock %}
+{% block content %}
+<br>
+
+<h2 class="text-center"><i class="fa-solid fa fa-exclamation"></i> Are Yor sure want to Cancel Booking to {{ booking.trek.name }}?</h2>
+<br>
+<h3 class="text-center">Once cancelled, you cannot book this trek again.</h3>
+
+<form action="{{ url_for('cancel_booking', booking_id=booking.id) }}" method="POST" class="text-center mt-5">
+    <button type="submit" class="btn btn-danger">Yes, Cancel Booking</button>
+    <a href="{{ url_for('my_bookings') }}" class="btn btn-primary ms-2">No, Go Back</a>
+</form>
+{% endblock %}

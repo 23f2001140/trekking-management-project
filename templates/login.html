@@ -3,25 +3,38 @@
 {% block title %}Login{% endblock %}
 
 {% block content %}
-<h1>Welcome to TrekCentral</h1>
-<br>
-<h2>Your one-stop destination for all things trekking!</h2>
-<br>
-<h2 class=>Login</h2>
+<div class="container d-flex justify-content-center align-items-center mt-5">
+  <div class="card shadow-lg p-4" style="max-width: 420px; border-radius: 16px;">
+    <div class="card-body">
 
-<form method="POST" action="">
-    <div class="col-sm-6 lg">
-        <label for="username" class="form-label">Username:</label>
-        <input type="text" id="username" name="username" class="form-control" required><br>
-    </div>
-    <div class="col-sm-6 lg">
-        <label for="password" class="form-label">Password:</label>
-        <input type="password" id="password" name="password" class="form-control" required><br>
-    </div>
-    <button type="submit" class="btn btn-primary">Login</button>
-</form>
-<br>
-<br>
+      <h1 class="text-center fw-bold mb-1" style="color: #2c7a4b;">TrekCentral</h1>
+      <p class="text-center text-muted mb-4">Your one-stop destination for all things trekking!</p>
 
-<p>Don't have an account? <a href="{{ url_for('register') }}" class="btn btn-secondary">Register here</a>.</p>
+      <h2 class="text-center fs-4 fw-semibold mb-3">Login</h2>
+
+      <form method="POST" action="">
+        <div class="mb-3">
+          <label for="username" class="form-label">Username:</label>
+          <input type="text" id="username" name="username" class="form-control" required>
+        </div>
+        <div class="mb-3">
+          <label for="password" class="form-label">Password:</label>
+          <input type="password" id="password" name="password" class="form-control" required>
+        </div>
+        <div class="d-grid">
+          <button type="submit" class="btn btn-success">Login</button>
+        </div>
+      </form>
+
+      <hr class="my-3">
+      <p class="text-center mb-0">
+        Don't have an account?
+        <a href="{{ url_for('register') }}" class="btn btn-outline-primary btn-sm ms-1">Register here</a>
+      </p>
+
+    </div>
+  </div>
+</div>
+<br>
+<br>
 {% endblock %}

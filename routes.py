@@ -385,24 +385,33 @@ def trek_update(trek_id):
         return redirect(url_for('trek_details'))
     return render_template('admin/update_trek.html' , trek=trek , get_trek_image=get_trek_image, staff=staff)
 
-@app.route('/admin/delete_trek/<int:trek_id>')
+@app.route('/admin/delete_trek/<int:trek_id>' , methods=['GET', 'POST'])
 @login_required
 @admin_required
 def delete_trek(trek_id):
+    if request.method == 'POST':
+        trek=Trek.query.get(trek_id)
+        if not trek:
+            flash('Invalid trek id!', 'danger')
+            return redirect(url_for('trek_details'))
+        
+        for ext in ALLOWED_EXTENSIONS:
+            path = os.path.join(TREK_IMAGES_FOLDER, f"{trek.id}.{ext}")
+            if os.path.exists(path):
+                os.remove(path)
+                break
+        db.session.delete(trek)
+        db.session.commit()
+        flash('Trek deleted successfully!', 'success')
+        return redirect(url_for('trek_details'))
+    
     trek=Trek.query.get(trek_id)
     if not trek:
         flash('Invalid trek id!', 'danger')
         return redirect(url_for('trek_details'))
     
-    for ext in ALLOWED_EXTENSIONS:
-        path = os.path.join(TREK_IMAGES_FOLDER, f"{trek.id}.{ext}")
-        if os.path.exists(path):
-            os.remove(path)
-            break
-    db.session.delete(trek)
-    db.session.commit()
-    flash('Trek deleted successfully!', 'success')
-    return redirect(url_for('trek_details'))
+    
+    return render_template('admin/trek_delete_confirmation.html' , trek_id=trek_id)
 
 @app.route('/admin/users_details')
 @login_required
@@ -575,11 +584,24 @@ def my_bookings():
     past_bookings=[booking for booking in bookings if booking.status=='Cancelled' or booking.trek.status == 'Completed']
     return render_template('users/my_bookings.html', ongoing_bookings=ongoing_bookings, past_bookings=past_bookings, get_trek_image=get_trek_image)
 
-@app.route('/user/cancel_booking/<int:booking_id>')
+@app.route('/user/cancel_booking/<int:booking_id>' , methods=['GET', 'POST'])
 @login_required
 @user_required
 @not_blacklisted
 def cancel_booking(booking_id):
+    if request.method == 'POST':
+        booking=Booking.query.get(booking_id)
+        if not booking:
+            flash('Booking not found!', 'danger')
+            return redirect(url_for('user_dashboard'))
+        if booking.user_id != current_user.id:
+            flash('You are not authorized to cancel this booking!', 'danger')
+            return redirect(url_for('user_dashboard'))
+        booking.trek.available_slots += 1
+        booking.status='Cancelled'
+        db.session.commit()
+        flash('Booking cancelled successfully!', 'success')
+        return redirect(url_for('user_dashboard'))
     booking=Booking.query.get(booking_id)
     if not booking:
         flash('Booking not found!', 'danger')
@@ -587,11 +609,8 @@ def cancel_booking(booking_id):
     if booking.user_id != current_user.id:
         flash('You are not authorized to cancel this booking!', 'danger')
         return redirect(url_for('user_dashboard'))
-    booking.trek.available_slots += 1
-    booking.status='Cancelled'
-    db.session.commit()
-    flash('Booking cancelled successfully!', 'success')
-    return redirect(url_for('user_dashboard'))
+    return render_template('users/cancel_booking_confirmation.html', booking=booking)
+    
 
 @app.route('/user/profile', methods=['GET', 'POST'])
 @login_required

@@ -56,7 +56,7 @@
     <h3 style="margin-left: 35px;">Staff waiting for approval</h3>
     <ul>
         {% for staff in pending_staff %}
-            <div class="card mb-3">
+            <div class="card mb-3 shadow-sm p-2" style="border-radius: 14px;">
                 <div class="card-body d-flex justify-content-between align-items-center">
                     <div>
                         <h5 class="card-title">{{ staff.fullname }}</h5>

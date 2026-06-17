@@ -2,41 +2,58 @@
 {% block title %}Register{% endblock %}
 
 {% block content %}
-<h1>Welcome to TrekCentral</h1>
 <br>
-<h2>Register your account by filling out the form below:</h2>
+<div class="container d-flex justify-content-center align-items-center mt-5">
+  <div class="card shadow-lg p-4" style="width: 100%; max-width: 480px; border-radius: 16px;">
+    <div class="card-body">
 
-<form method="POST" action="">
-    <div>
-        <label for="username" class="form-label">Select a Username:</label>
-        <input type="text" id="username" name="username" class="form-control" required><br>
-    </div>
-    <div>
-        <label for="fullname" class="form-label">Full Name:</label>
-        <input type="text" id="fullname" name="fullname" class="form-control" required><br>
-    </div>
-    <div>
-        <label for="phone" class="form-label">Phone Number:</label>
-        <input type="text" id="phone" name="phone" class="form-control" required><br>
-    </div>
-    <div>
-        <label for="password" class="form-label">Password:</label>
-        <input type="password" id="password" name="password" class="form-control" required><br>
-    </div>
-    <div class="form-label">
-        <label for="cpassword" class="form-label">Confirm Password:</label>
-        <input type="password" id="cpassword" name="cpassword" class="form-control" required><br>
-    </div>
-    <div class="form-label">
-        <label for="role" class="form-label">Select Role:</label>
-        <select id="role" name="role" class="form-select" required>
+      <h1 class="text-center fw-bold mb-1" style="color: #2c7a4b;">TrekCentral</h1>
+      <p class="text-center text-muted mb-4">Register your account by filling out the form below:</p>
+
+      <form method="POST" action="">
+        <div class="mb-3">
+          <label for="username" class="form-label">Select a Username:</label>
+          <input type="text" id="username" name="username" class="form-control" required>
+        </div>
+        <div class="mb-3">
+          <label for="fullname" class="form-label">Full Name:</label>
+          <input type="text" id="fullname" name="fullname" class="form-control" required>
+        </div>
+        <div class="mb-3">
+          <label for="phone" class="form-label">Phone Number:</label>
+          <input type="text" id="phone" name="phone" class="form-control" required>
+        </div>
+        <div class="mb-3">
+          <label for="password" class="form-label">Password:</label>
+          <input type="password" id="password" name="password" class="form-control" required>
+        </div>
+        <div class="mb-3">
+          <label for="cpassword" class="form-label">Confirm Password:</label>
+          <input type="password" id="cpassword" name="cpassword" class="form-control" required>
+        </div>
+        <div class="mb-3">
+          <label for="role" class="form-label">Select Role:</label>
+          <select id="role" name="role" class="form-select" required>
             <option value="">-- Select Role --</option>
             <option value="user" selected>User</option>
             <option value="staff">Staff</option>
-        </select><br>
-    <button type="submit" class="btn btn-primary">Register</button>
-</form>
+          </select>
+        </div>
+        <div class="d-grid">
+          <button type="submit" class="btn btn-success">Register</button>
+        </div>
+      </form>
+
+      <hr class="my-3">
+      <p class="text-center mb-0">
+        Already have an account?
+        <a href="{{ url_for('login') }}" class="btn btn-outline-primary btn-sm ms-1">Login here</a>
+      </p>
+
+    </div>
+  </div>
+</div>
 <br>
 <br>
-<p>Already have an account? <a href="{{ url_for('login') }}" class="btn btn-secondary">Login here</a>.</p>
+
 {% endblock %}
