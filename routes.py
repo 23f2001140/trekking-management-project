@@ -142,9 +142,16 @@ def admin_dashboard():
     users = User.query.filter_by(role='user').count()
     pending_staff = User.query.filter_by(role='staff', staff_status='pending').all()
     staff = User.query.filter_by(role='staff', staff_status='approved').count()
-    treks = Trek.query.count()
+    treks = Trek.query.all()
     bookings = Booking.query.count()
-    return render_template('admin/admin.html', users=users, pending_staff=pending_staff, staff=staff, treks=treks, bookings=bookings)
+    chart_labels=[]
+    chart_count=[]
+    for trek in treks:
+        chart_labels.append(trek.name)
+        bookings_count=len([booking for booking in trek.bookings if booking.status == 'Booked'])
+        chart_count.append(bookings_count)
+    
+    return render_template('admin/admin.html', users=users, pending_staff=pending_staff, staff=staff, treks=treks, bookings=bookings, chart_labels=chart_labels, chart_count=chart_count)
 
 @app.route('/admin/approve_staff/<int:staff_id>')
 @login_required
@@ -468,6 +475,7 @@ def admin_activate_user(user_id):
 @admin_required
 def admin_staff_details():
     staff_q=User.query.filter_by(role='staff' , staff_status='approved')
+    pending_staff = User.query.filter_by(role='staff', staff_status='pending').all()
     staf=request.args.get('staff')
     if staf:
         if staf.isnumeric():
@@ -479,7 +487,7 @@ def admin_staff_details():
         flash('No Staff Found!', 'danger')
         return redirect(url_for('admin_staff_details'))
     staff=staff_q.all()
-    return render_template('admin/staff_details.html', staff=staff)
+    return render_template('admin/staff_details.html', staff=staff, pending_staff=pending_staff)
 
 @app.route('/admin/blacklist_staff/<int:staff_id>')
 @login_required

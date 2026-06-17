@@ -11,7 +11,7 @@
       <a href="{{ url_for('trek_details')}}" class="text-decoration-none text-white">
         <div class="card-body">
           <h5 class="card-title fa-solid fa-map"></h5>
-          <h2 class="card-text">{{treks}}</h2>
+          <h2 class="card-text">{{treks | length}}</h2>
           <h5 class="card-title"><strong>Total Treks</strong></h5>
         </div>
       </a>
@@ -51,6 +51,36 @@
     </div>
   </div>
 </div>
+<br>
+<div class= "mt-2" style="width: 70%; margin: 10px auto;">
+  <canvas id="myChart"></canvas>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+  const ctx = document.getElementById('myChart');
+
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: {{chart_labels | tojson}},
+      datasets: [{
+        label: 'Treks Popularity',
+        data: {{chart_count | tojson}},
+        borderWidth: 1
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+</script>
+
 <br>
 {% if pending_staff %}
     <h3 style="margin-left: 35px;">Staff waiting for approval</h3>

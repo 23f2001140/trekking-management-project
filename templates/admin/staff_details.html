@@ -1,6 +1,37 @@
 {% extends "layout.html" %}
 {% block title %}Staff Details{% endblock %}
 {% block content %}
+{% if pending_staff %}
+<table class="table table-hover shadow-lg p-4">
+    <h3 class=" mt-4 mb"> Staff waiting for approval <i class="fa-solid fa-user-tie"></i></h3>
+        <thead class="table-primary">
+            <tr>
+            <th scope="col">Staff id</th>
+            <th scope="col">Username</th>
+            <th scope="col">Staff Name</th>
+            <th scope="col">Phone Number</th>
+            <th scope="col">Account Status</th>
+            <th scope="col" class="text-center">Action</th>
+            </tr>
+        </thead>
+        {% for staff in pending_staff %}
+        <tbody>
+            <tr class="table-success">
+            <th scope="row">{{staff.id}}</th>
+            <td>{{staff.username}}</td>
+            <td>{{staff.fullname}}</td>
+            <td>{{staff.phone}}</td>
+            <td>{{'Blacklisted' if staff.is_blacklisted else 'Active'}}</td>
+            <td class="text-center">
+                <a href="{{ url_for('approve_staff', staff_id=staff.id) }}" class="btn btn-outline-success"><i class="fa-solid fa-check"></i>Approve</a>
+                <a href="{{ url_for('reject_staff', staff_id=staff.id) }}" class="btn btn-outline-danger ms-1"><i class="fa-solid fa-ban"></i>Reject</a>
+            </td>
+            </tr>
+        </tbody>
+        {% endfor %}
+</table>
+{% endif %}
+<br>
 {% if staff %}
     <h3 class=" mt-4"> View All Staff Of <strong>TREKCENTRAL</strong>  <i class="fa-solid fa-user-group"></i></h3>
     <br>
