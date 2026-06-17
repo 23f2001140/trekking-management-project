@@ -297,7 +297,27 @@ def add_trek():
 @login_required
 @admin_required
 def trek_details():
-    treks=Trek.query.all()
+    treks_q=Trek.query
+    difficulty=request.args.get('difficulty')
+    search=request.args.get('sch')
+    if difficulty and search:
+        if search.isnumeric():
+            treks_q=treks_q.filter(Trek.difficulty==difficulty , Trek.id==search)
+        else:
+             treks_q=treks_q.filter(Trek.difficulty==difficulty , Trek.location.ilike('%'+search+'%'))
+    elif difficulty:
+        treks_q=treks_q.filter_by(difficulty=difficulty)
+    elif search:
+        if search.isnumeric():
+            treks_q=treks_q.filter(Trek.id==search)
+        else:
+            treks_q=treks_q.filter(Trek.location.ilike('%'+search+'%'))
+    
+    if not treks_q.first():
+        flash('No Treks Found!', 'danger')
+        return redirect(url_for('trek_details'))
+        
+    treks=treks_q.all()
     return render_template('admin/treks.html' , treks=treks, get_trek_image=get_trek_image)
         
 @app.route('/admin/trek_update/<int:trek_id>' , methods=['GET', 'POST'])
@@ -388,7 +408,18 @@ def delete_trek(trek_id):
 @login_required
 @admin_required
 def admin_users_details():
-    users=User.query.filter_by(role='user').all()
+    users_q=User.query.filter_by(role='user')
+    user=request.args.get('user')
+    if user:
+        if user.isnumeric():
+            users_q=users_q.filter(User.id==user)
+        else:
+            users_q=users_q.filter(User.fullname.ilike('%'+user+'%'))
+    
+    if not users_q.first():
+        flash('No Users Found!', 'danger')
+        return redirect(url_for('admin_users_details'))
+    users=users_q.all()
     return render_template('admin/users_details.html', users=users)
 
 @app.route('/admin/blacklist_user/<int:user_id>')
@@ -427,7 +458,18 @@ def admin_activate_user(user_id):
 @login_required
 @admin_required
 def admin_staff_details():
-    staff=User.query.filter_by(role='staff' , staff_status='approved').all()
+    staff_q=User.query.filter_by(role='staff' , staff_status='approved')
+    staf=request.args.get('staff')
+    if staf:
+        if staf.isnumeric():
+            staff_q=staff_q.filter(User.id==staf)
+        else:
+            staff_q=staff_q.filter(User.fullname.ilike('%'+staf+'%'))
+    
+    if not staff_q.first():
+        flash('No Staff Found!', 'danger')
+        return redirect(url_for('admin_staff_details'))
+    staff=staff_q.all()
     return render_template('admin/staff_details.html', staff=staff)
 
 @app.route('/admin/blacklist_staff/<int:staff_id>')

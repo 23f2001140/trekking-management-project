@@ -3,10 +3,13 @@
 {% block content %}
 <h1>Staff Details</h1>
 <p>Here you can view all the staff in the system.</p>
-<br>
-<br>
 {% if staff %}
     <h1 class=" mt-4"> View All Staff  <i class="fa-solid fa-user-group"></i></h1>
+    <br>
+    <form class="d-flex align-items-center gap-2" role="search" method="GET">
+        <input class="form-control w-50" type="search" placeholder="Search by Name or Staff id" aria-label="staff" id="staff" name="staff" value="{{ request.args.get('staff', '') }}">
+        <button class="btn btn-outline-success " type="submit"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
+    </form>
     <br>
 
     <table class="table table-hover">
