@@ -3,7 +3,7 @@
 
 {% block content %}
 <h1><i class="fa-solid fa-user mt mt-4"></i> Dashboard
-<a href="{{ url_for('my_bookings')}}" class="btn btn-success mt-4 float-end"><i class="fa-solid fa-book"></i> My Bookings | {{  bookings_status | length }} </a> </h1></h1>
+<a href="{{ url_for('my_bookings')}}" class="btn btn-success mt-4 float-end"><i class="fa-solid fa-book"></i> My Bookings | {{  bookings_status | length }} </a> </h1>
 <p  class="text-muted">Welcome, {{ current_user.fullname }}!</p>
 <br>
 <br>
@@ -29,7 +29,7 @@
                 <div class="col-md-4">
                 <img src="{{ get_trek_image(trek.id) }}" class="img-fluid rounded-start h-100" alt="{{ trek.name }}" style="object-fit: cover;">
                 </div>
-                <div class="col-md-8">
+                <div class="col-md-8 d-flex flex-column justify-content-between">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
@@ -93,7 +93,7 @@
                 <div class="col-md-4">
                 <img src="{{ get_trek_image(trek.id) }}" class="img-fluid rounded-start h-100" alt="{{ trek.name }}" style="object-fit: cover;">
                 </div>
-                <div class="col-md-8">
+                <div class="col-md-8 d-flex flex-column justify-content-between">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>

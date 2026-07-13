@@ -106,6 +106,9 @@ def register():
         if(password != cpassword):
             flash('Passwords do not match!', 'danger')
             return redirect(url_for('register'))
+        if len(phone) != 10:
+            flash('Invalid phone number!', 'danger')
+            return redirect(url_for('register'))
         if(User.query.filter_by(username=username).first()):
             flash('Username already exists!', 'danger')
             return redirect(url_for('register'))
@@ -210,6 +213,9 @@ def admin_profile():
         if not fullname or not phone:
             flash('Full name and phone number are required!', 'danger')
             return redirect(url_for('admin_profile'))
+        if len(phone) != 10:
+            flash('Invalid phone number!', 'danger')
+            return redirect(url_for('admin_profile'))
         
         if not check_password_hash(current_user.passhash, cpassword):
             flash('Incorrect current password!', 'danger')
@@ -270,8 +276,8 @@ def add_trek():
         
         duration = (end_date - start_date).days
         
-        if available_slots.isnumeric() and int(available_slots) < 0:
-            flash('Slots cannot be negative!', 'danger')
+        if not available_slots.isnumeric():
+            flash('Please enter a valid non-negative number for slots!', 'danger')
             return redirect(url_for('add_trek'))
         
         if not assigned_staff_id:
@@ -352,9 +358,9 @@ def trek_update(trek_id):
             return redirect(url_for('trek_update', trek_id=trek_id))
         
         duration = (end_date - start_date).days
-        if available_slots.isnumeric() and int(available_slots) < 0:
-            flash('Slots cannot be negative!', 'danger')
-            return redirect(url_for('add_trek'))
+        if not available_slots.isnumeric():
+            flash('Please enter a valid non-negative number for slots!', 'danger')
+            return redirect(url_for('trek_update', trek_id=trek_id))
         
         if not assigned_staff_id:
             if status in ['Open', 'Approved', 'Closed', 'Completed']:
@@ -526,6 +532,7 @@ def admin_activate_staff(staff_id):
 @admin_required
 def admin_booking_details():
     bookings=Booking.query.all()
+    bookings.reverse()
     return render_template('admin/admin_bookings.html', bookings=bookings)
 
 
@@ -640,6 +647,9 @@ def user_profile():
         if not fullname or not phone:
             flash('Full name and phone number are required!', 'danger')
             return redirect(url_for('user_profile'))
+        if len(phone) != 10:
+            flash('Invalid phone number!', 'danger')
+            return redirect(url_for('user_profile'))
         
         if not check_password_hash(current_user.passhash, cpassword):
             flash('Incorrect current password!', 'danger')
@@ -703,7 +713,7 @@ def manage_trek(trek_id):
             else:
                 flash('Invalid status!', 'danger')
                 return redirect(url_for('manage_trek', trek_id=trek_id))
-        if available_slots.isnumeric():
+        elif available_slots and available_slots.isnumeric():
             if int(available_slots) < 0:
                 flash('Slots cannot be negative!', 'danger')
                 return redirect(url_for('manage_trek', trek_id=trek_id))
@@ -716,12 +726,13 @@ def manage_trek(trek_id):
             flash('Please Enter Numeric Value for slots!', 'danger')
             return redirect(url_for('manage_trek', trek_id=trek_id))
     trek=Trek.query.get(trek_id)
-    trek_users=[booking for booking in trek.bookings if booking.status == 'Booked']
-    cancelled_users=[booking for booking in trek.bookings if booking.status == 'Cancelled']
-    
     if not trek:
         flash('Trek not found!', 'danger')
         return redirect(url_for('staff_dashboard'))
+    
+    trek_users=[booking for booking in trek.bookings if booking.status == 'Booked']
+    cancelled_users=[booking for booking in trek.bookings if booking.status == 'Cancelled']
+    
     if trek.assigned_staff_id != current_user.id:
         flash('You are not authorized to manage this trek!', 'danger')
         return redirect(url_for('staff_dashboard'))
@@ -746,6 +757,9 @@ def staff_profile():
         
         if not fullname or not phone:
             flash('Full name and phone number are required!', 'danger')
+            return redirect(url_for('staff_profile'))
+        if len(phone) != 10:
+            flash('Invalid phone number!', 'danger')
             return redirect(url_for('staff_profile'))
         
         if not check_password_hash(current_user.passhash, cpassword):

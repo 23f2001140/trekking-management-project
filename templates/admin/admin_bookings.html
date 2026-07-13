@@ -20,7 +20,7 @@
             <th scope="col">Status</th>
             </tr>
         </thead>
-        {% for booking in bookings | sort(attribute='booking_date', reverse=True) %}
+        {% for booking in bookings %}
 
         <tbody>
             <tr class="table-{{'success' if booking.status=='Booked' else 'danger' if booking.status=='Cancelled' else 'primary' }}">
