@@ -2,20 +2,20 @@
 {% block title %}Treks{% endblock %}
 
 {% block content %}
+<h1 class=" mt-4"> View All Treks  <i class="fa-solid fa-route"></i>
+<a href="{{ url_for('add_trek')}}" class="btn btn-success mt-2 float-end"><i class="fa-solid fa-plus"></i>Add A New Trek </a> </h1></h1>
+<br>
+<form class="d-flex align-items-center gap-2" role="search" method="GET">
+    <select class="form-select w-auto" id="difficulty" name="difficulty">
+        <option value="">Select Difficulty</option>
+        <option value="Easy" {% if request.args.get('difficulty') == 'Easy' %}selected{% endif %}>Easy</option>
+        <option value="Moderate" {% if request.args.get('difficulty') == 'Moderate' %}selected{% endif %}>Moderate</option>
+        <option value="Hard" {% if request.args.get('difficulty') == 'Hard' %}selected{% endif %}>Hard</option>
+    </select>
+    <input class="form-control w-50" type="search" placeholder="Search by Location or Trek id" aria-label="sch" id="sch" name="sch" value="{{ request.args.get('sch', '') }}">
+    <button class="btn btn-outline-success " type="submit"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
+</form>
 {% if treks %}
-    <h1 class=" mt-4"> View All Treks  <i class="fa-solid fa-route"></i>
-    <a href="{{ url_for('add_trek')}}" class="btn btn-success mt-2 float-end"><i class="fa-solid fa-plus"></i>Add A New Trek </a> </h1></h1>
-    <br>
-    <form class="d-flex align-items-center gap-2" role="search" method="GET">
-        <select class="form-select w-auto" id="difficulty" name="difficulty">
-            <option value="">Select Difficulty</option>
-            <option value="Easy" {% if request.args.get('difficulty') == 'Easy' %}selected{% endif %}>Easy</option>
-            <option value="Moderate" {% if request.args.get('difficulty') == 'Moderate' %}selected{% endif %}>Moderate</option>
-            <option value="Hard" {% if request.args.get('difficulty') == 'Hard' %}selected{% endif %}>Hard</option>
-        </select>
-        <input class="form-control w-50" type="search" placeholder="Search by Location or Trek id" aria-label="sch" id="sch" name="sch" value="{{ request.args.get('sch', '') }}">
-        <button class="btn btn-outline-success " type="submit"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
-    </form>
     <br>
     {% for trek in treks %}
         <div class="card mb-3 col-md-12">

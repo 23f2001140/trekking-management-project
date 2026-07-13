@@ -32,14 +32,14 @@
 </table>
 {% endif %}
 <br>
+<h3 class=" mt-4"> View All Staff Of <strong>TREKCENTRAL</strong>  <i class="fa-solid fa-user-group"></i></h3>
+<br>
+<form class="d-flex align-items-center gap-2" role="search" method="GET">
+    <input class="form-control w-50" type="search" placeholder="Search by Name or Staff id" aria-label="staff" id="staff" name="staff" value="{{ request.args.get('staff', '') }}">
+    <button class="btn btn-outline-success " type="submit"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
+</form>
+<br>
 {% if staff %}
-    <h3 class=" mt-4"> View All Staff Of <strong>TREKCENTRAL</strong>  <i class="fa-solid fa-user-group"></i></h3>
-    <br>
-    <form class="d-flex align-items-center gap-2" role="search" method="GET">
-        <input class="form-control w-50" type="search" placeholder="Search by Name or Staff id" aria-label="staff" id="staff" name="staff" value="{{ request.args.get('staff', '') }}">
-        <button class="btn btn-outline-success " type="submit"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
-    </form>
-    <br>
 
     <table class="table table-hover shadow-lg p-4">
         <thead class="table-primary">

@@ -1,14 +1,14 @@
 {% extends "layout.html" %}
 {% block title %}Users Details{% endblock %}
 {% block content %}
+<h3 class=" mt-4"> View All Users Of <strong>TREKCENTRAL</strong>  <i class="fa-solid fa-user-group"></i></h3>
+<br>
+<form class="d-flex align-items-center gap-2" role="search" method="GET">
+    <input class="form-control w-50" type="search" placeholder="Search by Name or user id" aria-label="user" id="user" name="user" value="{{ request.args.get('user', '') }}">
+    <button class="btn btn-outline-success " type="submit"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
+</form>
+<br>
 {% if users %}
-    <h3 class=" mt-4"> View All Users Of <strong>TREKCENTRAL</strong>  <i class="fa-solid fa-user-group"></i></h3>
-    <br>
-    <form class="d-flex align-items-center gap-2" role="search" method="GET">
-        <input class="form-control w-50" type="search" placeholder="Search by Name or user id" aria-label="user" id="user" name="user" value="{{ request.args.get('user', '') }}">
-        <button class="btn btn-outline-success " type="submit"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
-    </form>
-    <br>
 
     <table class="table table-hover shadow-lg p-4">
         <thead class="table-primary">
