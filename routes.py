@@ -325,10 +325,6 @@ def trek_details():
             treks_q=treks_q.filter(Trek.id==search)
         else:
             treks_q=treks_q.filter(Trek.location.ilike('%'+search+'%'))
-    
-    if not treks_q.first():
-        flash('No Treks Found!', 'danger')
-        return redirect(url_for('trek_details'))
         
     treks=treks_q.all()
     return render_template('admin/treks.html' , treks=treks, get_trek_image=get_trek_image)
@@ -407,6 +403,9 @@ def delete_trek(trek_id):
         if not trek:
             flash('Invalid trek id!', 'danger')
             return redirect(url_for('trek_details'))
+        if trek.bookings:
+            flash('You cannot delete a trek that already has bookings.', 'danger')
+            return redirect(url_for('trek_details'))
         
         for ext in ALLOWED_EXTENSIONS:
             path = os.path.join(TREK_IMAGES_FOLDER, f"{trek.id}.{ext}")
@@ -438,9 +437,6 @@ def admin_users_details():
         else:
             users_q=users_q.filter(User.fullname.ilike('%'+user+'%'))
     
-    if not users_q.first():
-        flash('No Users Found!', 'danger')
-        return redirect(url_for('admin_users_details'))
     users=users_q.all()
     return render_template('admin/users_details.html', users=users)
 
@@ -489,9 +485,6 @@ def admin_staff_details():
         else:
             staff_q=staff_q.filter(User.fullname.ilike('%'+staf+'%'))
     
-    if not staff_q.first():
-        flash('No Staff Found!', 'danger')
-        return redirect(url_for('admin_staff_details'))
     staff=staff_q.all()
     return render_template('admin/staff_details.html', staff=staff, pending_staff=pending_staff)
 
@@ -611,6 +604,9 @@ def cancel_booking(booking_id):
             return redirect(url_for('user_dashboard'))
         if booking.user_id != current_user.id:
             flash('You are not authorized to cancel this booking!', 'danger')
+            return redirect(url_for('user_dashboard'))
+        if booking.status == 'Cancelled':
+            flash('This booking is already cancelled!', 'danger')
             return redirect(url_for('user_dashboard'))
         booking.trek.available_slots += 1
         booking.status='Cancelled'

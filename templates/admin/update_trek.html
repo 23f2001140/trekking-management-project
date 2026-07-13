@@ -46,7 +46,7 @@
     <select class="form-select" id="assigned_staff_id" name="assigned_staff_id" >
       <option value="">-- Select Staff --</option>
       {% for staff in staff %}
-        <option value="{{ staff.id }}" {% if staff.id == trek.assigned_staff.id %}selected{% endif %}>{{ staff.fullname }}</option>
+          <option value="{{ staff.id }}" {% if trek.assigned_staff and staff.id == trek.assigned_staff.id %}selected{% endif %}>{{ staff.fullname }}</option>
       {% endfor %}
     </select>
   </div>

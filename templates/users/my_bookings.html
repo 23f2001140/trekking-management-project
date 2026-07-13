@@ -28,7 +28,7 @@
                             <div>
                             <p class="card-text"><strong>Slots Available: </strong>{{ booking.trek.available_slots }} slots</p>
                             <h5 class="card-text badge bg-{{'warning' if booking.trek.status=='Started' else 'success' if booking.trek.status=='Open' else 'secondary' }}"><strong>Status: </strong>{{ booking.trek.status }}</h5> 
-                            <p class="card-text"><strong>Assigned Staff: </strong>{{ booking.trek.assigned_staff.fullname if booking.trek.assigned_staff.fullname else 'No Staff Assigned' }}</p>
+                            <p class="card-text"><strong>Assigned Staff: </strong>{{ booking.trek.assigned_staff.fullname if booking.trek.assigned_staff else 'No Staff Assigned' }}</p>
                             <h5 class="card-text mb-3">
                                 {% if booking.trek.difficulty == 'Easy' %}
                                 <span class="badge bg-success">Easy</span>
@@ -77,7 +77,7 @@
                             </div>
                             <div>
                             <h5 class="card-text badge bg-{{'info' if booking.trek.status=='Completed' else 'success' }}"><strong>Status: </strong>{{ booking.trek.status }}</h5> 
-                            <p class="card-text"><strong>Assigned Staff: </strong>{{ booking.trek.assigned_staff.fullname if booking.trek.assigned_staff.fullname else 'No Staff Assigned' }}</p>
+                            <p class="card-text"><strong>Assigned Staff: </strong>{{ booking.trek.assigned_staff.fullname if booking.trek.assigned_staff else 'No Staff Assigned' }}</p>
                             <h5 class="card-text mb-3">
                                 {% if booking.trek.difficulty == 'Easy' %}
                                 <span class="badge bg-success">Easy</span>

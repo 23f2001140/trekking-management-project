@@ -36,7 +36,7 @@
                             <div>
                             <p class="card-text"><strong>Slots Available: </strong>{{ trek.available_slots }} slots</p>
                             <h5 class="card-text badge bg-{{'info' if trek.status=='Approved' else 'success' if trek.status=='Open' else 'warning' if trek.status=='Pending' else 'danger'  if trek.status=='Closed' else 'primary' }}"><strong>Status: </strong>{{ trek.status }}</h5> 
-                            <p class="card-text"><strong>Assigned Staff: </strong>{{ trek.assigned_staff.fullname if trek.assigned_staff.fullname else 'No Staff Assigned' }}</p>
+                            <p class="card-text"><strong>Assigned Staff: </strong>{{ trek.assigned_staff.fullname if trek.assigned_staff else 'No Staff Assigned' }}</p>
                             <h5 class="card-text mb-3">
                                 {% if trek.difficulty == 'Easy' %}
                                 <span class="badge bg-success">Easy</span>
