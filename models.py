@@ -2,6 +2,7 @@ from flask_sqlalchemy import SQLAlchemy
 from app import app
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
+import os
 
 db = SQLAlchemy(app)
 
@@ -43,8 +44,11 @@ class Booking(db.Model, UserMixin):
     
 with app.app_context():
     db.create_all()
-    admin=User.query.filter_by(username='admin').first()
+    admin_username = os.getenv('ADMIN_USERNAME')
+    admin_phone = os.getenv('ADMIN_PHONE')
+    admin_password = os.getenv('ADMIN_PASSWORD')
+    admin=User.query.filter_by(username=admin_username).first()
     if not admin:
-        admin_user = User(username='admin', phone='0000000000', passhash=generate_password_hash('admin123'), fullname='Admin', role='admin')
+        admin_user = User(username=admin_username, phone=admin_phone, passhash=generate_password_hash(admin_password), fullname='Admin', role='admin')
         db.session.add(admin_user)
         db.session.commit()
