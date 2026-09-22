@@ -158,4 +158,3 @@ This project was developed as a full-stack web application using Flask and serve
 ## License
 
 This project is intended for educational and portfolio purposes.
-![Uploading admin dashboard.png…]()
