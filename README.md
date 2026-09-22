@@ -142,6 +142,12 @@ TrekCentral uses role-based access control with three primary roles:
 | **Admin** | Manage treks, users, staff approvals, assignments, and access control |
 
 ## Screenshots
+<img width="1920" height="1080" alt="admin dashboard" src="https://github.com/user-attachments/assets/b0946f84-111b-40ea-9036-bf65585db8ed" />
+<img width="1920" height="1080" alt="booking history" src="https://github.com/user-attachments/assets/8bdd66c9-b496-4593-aad5-a97393a797c1" />
+<img width="1920" height="1080" alt="staff list" src="https://github.com/user-attachments/assets/b020adc9-8f1c-4137-9bfb-42e046b97fc4" />
+<img width="1920" height="1991" alt="user home page" src="https://github.com/user-attachments/assets/d3237759-caad-4e22-8717-fe310287a45f" />
+<img width="1920" height="1895" alt="staff dahsboard" src="https://github.com/user-attachments/assets/3ed6ec1a-88f5-448a-b057-12295b0e94b7" />
+<img width="1920" height="1080" alt="staff trek manage" src="https://github.com/user-attachments/assets/4eab45c8-929e-4d33-bfd3-9a6277ff89e1" />
 
 
 
@@ -152,6 +158,4 @@ This project was developed as a full-stack web application using Flask and serve
 ## License
 
 This project is intended for educational and portfolio purposes.
-
-
-One deliberate choice: I **didn't include a fake demo login/password** in the README. Since we're making the repo public, that's better kept out unless we later decide to create a deliberately safe demo account.
+![Uploading admin dashboard.png…]()
